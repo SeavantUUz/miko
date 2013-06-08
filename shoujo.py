@@ -49,6 +49,34 @@ class Node(object):
     def Abstrct(self):
         return self._abstrct
         
+## from <<python cookbook>>
+def paragraphs(text,is_separator=str.isspace,joiner=''.join):
+    paragraph = []
+    for line in text:
+        if is_separator(line):
+            if paragraph:
+                yield joiner(paragraph)
+                paragraph=[]
+        else:
+            paragraph.append(line)
+    if paragraph:
+        yield joiner(paragraph)
+
+## varify_properties
+## Maybe you can add some new ways 
+## to make sure all your properties
+## are well
+def properties_varify(title,archive,tags,blank):
+    if blank != '\n':
+        raise Exception("\nPlease obey the rules.First Four line have some special means\n")
+    if title == None:
+        raise Exception("\nYou should not let the first paragraph empty! Rechek your blog please!\n")
+    if archive == None:
+        archive = u'未命名'
+    if tags == None:
+        tags = ['default']
+    return (title,archive,tags)
+
 
 def get_tree(source,NODE=[]):
     for root,dirs,files in os.walk(source):
@@ -68,10 +96,11 @@ def get_tree(source,NODE=[]):
             archive = f.readline().split(':')[-1].strip()
             tags = f.readline().split(':')[-1].split(',')
             tags = [word.strip() for word in tags]
-            ## varify above properti are all right
-            properties_varify(title,archive,tags)
             ## release the forth line as empty line
+            ## which could help varifying
             blank_line = f.readline()
+            ## varify above properti are all right
+            title,archive,tags = properties_varify(title,archive,tags,blank_line)
             content = f.read()
             ## abstrct always use content's first 
             ## paragraph.I suppose this is split 
