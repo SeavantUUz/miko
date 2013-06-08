@@ -1,0 +1,4 @@
+SOURCE_DIR:      ./blog/
+DESTINATION_DIR: ./dest/
+TEMPLATE_PATH:   ./templates/
+
