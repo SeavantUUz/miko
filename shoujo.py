@@ -1,5 +1,5 @@
 # coding:utf-8
-import os,time
+import os,time,codecs
 import yaml,jinja2,misaka
 from Node import Node
 
@@ -7,7 +7,7 @@ from Node import Node
 
 OUT_DIR = '/home/aprocysanae/outdir'
 
-def paragraphs(text,is_separator=str.isspace,joiner=''.join):
+def paragraphs(text,is_separator=unicode.isspace,joiner=''.join):
     ''' To split the text to paragraphs.return a generator '''
 
     paragraph = []
@@ -32,9 +32,9 @@ def properties_varify(title,archive,tags,blank):
         raise Exception("\nPlease obey the rules.First Four line have some special means\n")
     if title == None:
         raise Exception("\nYou should not let the first paragraph empty! Rechek your blog please!\n")
-    if archive == None:
+    if archive == '':
         archive = u'未命名'
-    if tags == None:
+    if tags[0] == u'':
         tags = ['default']
     return (title,archive,tags)
 
@@ -49,12 +49,13 @@ def built(filename,auto_abstrct=False,max_lenth=1000):
         4. please always leave the forth line as a empty line which could help the program varify all you written above are right '''
 
     m_time = os.path.getmtime(filename)
-    f = open(filename,'rU') 
+    ## make sure every line is decode utf-8
+    f = codecs.open(filename,'r','utf-8','strict') 
     title = f.readline().replace('\n','').replace('\r','').strip()
     path = os.path.join(OUT_DIR,title+'.html')
     archive = f.readline().split(':')[-1].strip()
     tags = f.readline().split(':')[-1]
-    tags = tags.decode('utf-8').replace(u'，',',').split(',')
+    tags = tags.replace(u'，',',').split(',')
     tags = [word.strip() for word in tags]
     blank_line = f.readline()
     title,archive,tags = properties_varify(title,archive,tags,blank_line)
@@ -75,6 +76,13 @@ def built(filename,auto_abstrct=False,max_lenth=1000):
         except StopIteration:
             remainText = ''
         content = ''.join([abstrct,remainText])
+
+    ## use misaka process markdown
+    rndr = misaka.HtmlRenderer()
+    md = misaka.Markdown(rndr)
+    abstrct = md.render(abstrct)
+    content = md.render(content)
+
     node = Node(timestamp = m_time,title=title,path = path,archive=archive,tags=tags,content=content,abstrct=abstrct)
     return node
 
