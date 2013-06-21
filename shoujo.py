@@ -1,5 +1,5 @@
 # coding:utf-8
-import os,time,codecs
+import os,time,codecs,sys,pickle
 import yaml,jinja2,misaka
 from Node import Node
 
@@ -38,7 +38,8 @@ def properties_varify(title,archive,tags,blank):
         tags = ['default']
     return (title,archive,tags)
 
-def built(filename,auto_abstrct=False,max_lenth=1000):
+
+def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None):
     ''' convert markdown file to html,to let the process more clearly,please remember the below rules:
         1. the first line is your article's title
         2. the second line your should written as this:
@@ -77,6 +78,7 @@ def built(filename,auto_abstrct=False,max_lenth=1000):
             remainText = ''
         content = ''.join([abstrct,remainText])
 
+
     ## use misaka process markdown
     rndr = misaka.HtmlRenderer()
     md = misaka.Markdown(rndr)
@@ -84,7 +86,47 @@ def built(filename,auto_abstrct=False,max_lenth=1000):
     content = md.render(content)
 
     node = Node(timestamp = m_time,title=title,path = path,archive=archive,tags=tags,content=content,abstrct=abstrct)
+
+    ## Use list or dict?
+    ## My answer is list.
+    ## Because dict can't be sort.
+
+    def compare(node1,node2):
+        return cmp(node1.TimeStamp,node2.TimeStamp)
+
+    if Nodes == None:
+        try:
+            pick = open('data.pick','rb')
+        except IOError:
+            Nodes = []
+        else:
+            Nodes = pickle.load(pick)
+            pick.close()
+
+
+        if node.Title not in [o.Title for o in Nodes]: 
+            Nodes.append(node)
+            Nodes.sort(compare,reverse=True)
+    
+        else:
+            print u'\n确定更新 %s ? yes/no: ' % node.Title
+            choose = raw_input()
+            if choose == 'yes':
+                for i,o in enumerate(Nodes):
+                    if o.Title == node.Title:
+                        del Nodes[i]
+                        break
+                Nodes.append(node)
+                Nodes.sort(compare,reverse=True)
+                
+        pick = open('data.pick','wb')
+        pickle.dump(Nodes,pick) 
+        pick.close()
+
+    else:
+        Nodes.append(node)
     return node
+
 
 
 ##def rebuiltAll(source,NODE=[]):
@@ -105,7 +147,4 @@ def built(filename,auto_abstrct=False,max_lenth=1000):
 ##    write_file(node['url'],template.render(post = node))
 
 if __name__ == '__main__':
-    print Node
-    node = built('example')
-    for i in [node.Title,node.TimeStamp,node.Path,node.Tags,node.Content,node.Archive,node.Abstrct]:
-        print i,'\n'
+    node = post('example')

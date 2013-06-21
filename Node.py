@@ -42,3 +42,9 @@ class Node(object):
     @property
     def Abstrct(self):
         return self._abstrct
+
+    def __unicode__(self):
+        return self._title
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
