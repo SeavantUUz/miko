@@ -1,4 +1,4 @@
-# coding:urt-8
+# coding:utf-8
 ## each article
 ## you can also add some other properties
 class Node(object):
