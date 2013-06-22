@@ -1,3 +1,5 @@
 jinja2==2.6
 misaka==1.0.2
 pyyaml
+pygments
+houdini.py

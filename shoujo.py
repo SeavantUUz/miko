@@ -1,11 +1,25 @@
 # coding:utf-8
 import os,time,codecs,sys,pickle
-import yaml,misaka
+import yaml
 from jinja2 import Environment,PackageLoader
+import houdini as h
+from pygments import highlight
+from pygments.lexers import get_lexer_by_name
+from pygments.formatters import HtmlFormatter
+import misaka as m
+from misaka import HtmlRenderer,SmartyPants
 from Node import Node,Site
 
 
 OUT_DIR = '/home/aprocysanae/outdir'
+class BleepRenderer(HtmlRenderer,SmartyPants):
+    def block_code(self, text, lang):
+        if not lang:
+            return '\n<pre><code>%s</code></pre>\n' % \
+                h.escape_html(text.encode("utf8").strip())
+        lexer = get_lexer_by_name(lang, stripall=True)
+        formatter = HtmlFormatter()
+        return highlight(text, lexer, formatter)
 
 def _paragraphs(text,is_separator=unicode.isspace,joiner=''.join):
     ''' To split the text to paragraphs.return a generator '''
@@ -110,8 +124,9 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None):
 
 
     ## use misaka process markdown
-    rndr = misaka.HtmlRenderer()
-    md = misaka.Markdown(rndr)
+    renderer = BleepRenderer()
+    md = m.Markdown(renderer,
+            extensions=m.EXT_FENCED_CODE | m.EXT_NO_INTRA_EMPHASIS)
     abstrct = md.render(abstrct)
     content = md.render(content)
 
