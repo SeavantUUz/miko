@@ -1,4 +1,8 @@
-SOURCE_DIR:      ./blog/
-DESTINATION_DIR: ./dest/
-TEMPLATE_PATH:   ./templates/
-
+OUTDIR:          outdir
+MAIN_PATH:       /home/aprocysanae/github/PDBshoujo/
+THEME_DIR:       default
+NAME:            早苗的空想庭院
+AUTHOR:          AprocySanae
+HOMEPAGE:        www.kochiya.me
+VERSION:         0.1
+DESCRIPTION:     早苗控

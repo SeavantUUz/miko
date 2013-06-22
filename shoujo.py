@@ -1,13 +1,13 @@
 # coding:utf-8
 import os,time,codecs,sys,pickle
-import yaml,jinja2,misaka
-from Node import Node
+import yaml,misaka
+from jinja2 import Environment,PackageLoader
+from Node import Node,Site
 
-##config = yaml.load(open('config.yaml','r'))
 
 OUT_DIR = '/home/aprocysanae/outdir'
 
-def paragraphs(text,is_separator=unicode.isspace,joiner=''.join):
+def _paragraphs(text,is_separator=unicode.isspace,joiner=''.join):
     ''' To split the text to paragraphs.return a generator '''
 
     paragraph = []
@@ -25,7 +25,7 @@ def paragraphs(text,is_separator=unicode.isspace,joiner=''.join):
 ## Maybe you can add some new ways 
 ## to make sure all your properties
 ## are well
-def properties_varify(title,archive,tags,blank):
+def _properties_varify(title,archive,tags,blank):
     ''' varify your article.'''
 
     if blank != '\n':
@@ -37,6 +37,36 @@ def properties_varify(title,archive,tags,blank):
     if tags[0] == u'':
         tags = ['default']
     return (title,archive,tags)
+
+def _getNodes():
+    try:
+        pick = open('data.pick','rb')
+    except IOError:
+        Nodes = []
+    else:
+        Nodes = pickle.load(pick)
+        pick.close()
+    return Nodes
+
+def _writeNodes(Nodes):
+    pick = open('data.pick','wb')
+    pickle.dump(Nodes,pick) 
+    pick.close()
+
+def _readConfig():
+    config = yaml.load(open('config.yaml','r'))
+    return config
+
+
+def _renderToHtml(node):
+    config = _readConfig()
+    site = Site(config)
+    env = Environment(loader=PackageLoader(site.themeDir,'templates'))
+    template = env.get_template('post.html')
+    html = template.render(post=node,site=site)
+    f = codecs.open(os.path.join(site.outDir,node.Title+'.html'),'w','utf-8')
+    f.write(html)
+    f.close()
 
 
 def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None):
@@ -59,7 +89,7 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None):
     tags = tags.replace(u'，',',').split(',')
     tags = [word.strip() for word in tags]
     blank_line = f.readline()
-    title,archive,tags = properties_varify(title,archive,tags,blank_line)
+    title,archive,tags = _properties_varify(title,archive,tags,blank_line)
     ## abstrct always use content's first 
     ## paragraph.I suppose this is split 
     ## from below by empty line
@@ -70,7 +100,7 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None):
         content = ''.join([abstrct,f.read()])
     else:
         text = f.read()
-        paragraph = paragraphs(text.splitlines(True))
+        paragraph = _paragraphs(text.splitlines(True))
         abstrct = paragraph.next()
         try:
             remainText = paragraph.next()
@@ -95,14 +125,7 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None):
         return cmp(node1.TimeStamp,node2.TimeStamp)
 
     if Nodes == None:
-        try:
-            pick = open('data.pick','rb')
-        except IOError:
-            Nodes = []
-        else:
-            Nodes = pickle.load(pick)
-            pick.close()
-
+        Nodes = _getNodes()
 
         if node.Title not in [o.Title for o in Nodes]: 
             Nodes.append(node)
@@ -118,33 +141,44 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None):
                         break
                 Nodes.append(node)
                 Nodes.sort(compare,reverse=True)
-                
-        pick = open('data.pick','wb')
-        pickle.dump(Nodes,pick) 
-        pick.close()
+
+        _writeNodes(Nodes)            
 
     else:
         Nodes.append(node)
+    _renderToHtml(node)
     return node
 
+def show(reverse = False):
+    Nodes = _getNodes() 
+    if Nodes == []:
+        print u'这里空空如也，什么都没有...\n'
+        return False
+    else:
+        print '\n------------------------------'
+        if reverse:
+            Nodes.reverse()
+        for i,o in enumerate(Nodes):
+            print u'%5d:  %s' % (i,o.Title)
+        return True
 
+def remove(index):
+    Nodes = _getNodes()
+    try:
+        print u'\n真的希望删除 %d: %s ? (yes/no)' % (index,Nodes[index].Title)
+        choose = raw_input()
+        if choose == 'yes':
+            Nodes.remove(Nodes[index])
+        _writeNodes(Nodes)
+        print u'\n已删除'
+        return True
+    except IndexError:
+        print u'\n移除失败，不存在的索引: %d' % index
+        print '\n------------------------------'
+        show()
+        return False
 
-##def rebuiltAll(source,NODE=[]):
-##    for root,dirs,files in os.walk(source):
-##        for filename in files:
-##            m_time = os.path.getmtime(filename)
-##            path = os.path.join(root,filename)
-##            NODE.append(node)
-##    return NODE
-##
-##
-##def generate_homepage(nodes,env):
-##    template = env.get_template(TEMPLATES['home'])
-##    write_file('index.html',template.render(posts = nodes[:HOME_POSTS]))
-##
-##def generate_post(node,env):
-##    template = env.get_template(TEMPLATES['post'])
-##    write_file(node['url'],template.render(post = node))
+    
 
 if __name__ == '__main__':
-    node = post('example')
+    post('example1') 

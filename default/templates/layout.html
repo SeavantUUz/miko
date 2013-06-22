@@ -6,7 +6,7 @@
         <script>if (top !== self) top.location = self.location;</script>
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
         <link rel="stylesheet" href="{{site.themePath}}/static/style.css" />
-        <link rel="stylesheet" href="../static/pygments.css" />
+        <link rel="stylesheet" href="{{site.themePath}}/static/pygments.css" />
         <!--[if lt IE 9]>
         <script type="text/javascript" src="../static/html5shiv.js"></script>
         <![endif]-->
@@ -41,7 +41,7 @@
         </footer>
 
         {% block beforejs %}{% endblock %}
-        <script type="text/javascript" src="../static/mobile.js"></script>
+        <script type="text/javascript" src="{{site.themePath}}/static/mobile.js"></script>
         {% block afterjs %}{% endblock %}
     </body>
 </html>
