@@ -242,9 +242,9 @@ def page():
     Nodes = _getNodes()
     _renderToPage(Nodes)
 
-def PostAll(dir_name=None):
+def postAll(dir_name=None):
 ''' clear up Nodes and files.Rebuild all from backupdir'''
-    Nodes = []
+    Nodes = _getNodes()
     config = _readConfig()
     outdir = os.path.join(config['MAIN_PATH'],config['OUTDIR'])
     backupdir = os.path.join(config['MAIN_PAIN'],config['BACKUP_DIR'])
@@ -254,9 +254,11 @@ def PostAll(dir_name=None):
             os.remove(os.path.join(root,name))
     if dir_name == None:
         dir_name = backupdir
+        Nodes = []
     for root,dirs,files in os.walk(dir_name):
         for filename in files:
             post(filename,Nodes)
+    _writeNodes(Nodes)
 
 
 
