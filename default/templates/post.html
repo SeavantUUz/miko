@@ -7,8 +7,10 @@
 {% endblock %}
 
 {% block main %}
+
+
 <div class="hentry">
-    <h1 class="entry-title">{{post.Title}}</h1>
+    <h2 class="entry-title">{{post.Title}}</h2>
     <div class="entry-meta">
         <time class="updated" datetime="{{post.Date}}">
             {{post.Date}}
@@ -28,4 +30,6 @@
     </div>
 
 </div>
-{%- endblock %}
+
+
+{% endblock %}

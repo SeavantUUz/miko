@@ -260,9 +260,11 @@ hr.end {
 #footer .copyright a:hover {
     color: #d14;
 }
+
 /* article */
 .hentry {
     overflow: hidden;
+    top: 20;
     font-family: 'Rosario', 'Xin Gothic', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', Arial, sans-serif;
 }
 .entry-title, .hentry h2, .hentry h3, .hentry h4 {

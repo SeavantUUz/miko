@@ -11,7 +11,6 @@ from misaka import HtmlRenderer,SmartyPants
 from Node import Node,Site
 
 
-OUT_DIR = '/home/aprocysanae/outdir'
 class BleepRenderer(HtmlRenderer,SmartyPants):
     def block_code(self, text, lang):
         if not lang:
@@ -22,18 +21,26 @@ class BleepRenderer(HtmlRenderer,SmartyPants):
         return highlight(text, lexer, formatter)
 
 def _paragraphs(text,is_separator=unicode.isspace,joiner=''.join):
-    ''' To split the text to paragraphs.return a generator '''
+    ''' To split the text to abstrct and content '''
 
+    isAbstrct = False
     paragraph = []
+    abstrct = ''
+    content = ''
     for line in text:
-        if is_separator(line):
-            if paragraph:
-                yield joiner(paragraph)
-                paragraph=[]
+        if isAbstrct == False:
+            if is_separator(line): 
+                if paragraph:
+                    abstrct = joiner(paragraph)
+                    paragraph=[]
+                    isAbstrct = True
+            else:
+                paragraph.append(line)
         else:
             paragraph.append(line)
     if paragraph:
-        yield joiner(paragraph)
+        content = joiner(paragraph)
+    return abstrct,content
 
 ## varify_properties
 ## Maybe you can add some new ways 
@@ -82,6 +89,9 @@ def _renderToHtml(node):
     f.write(html)
     f.close()
 
+def _compare(node1,node2):
+    return cmp(node1.TimeStamp,node2.TimeStamp)
+
 
 def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
     ''' convert markdown file to html,to let the process more clearly,please remember the below rules:
@@ -93,16 +103,22 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
         tags:python,sanae
         4. please always leave the forth line as a empty line which could help the program varify all you written above are right '''
 
+    con = _readConfig()
     m_time = os.path.getmtime(filename)
     ## make sure every line is decode utf-8
     f = codecs.open(filename,'r','utf-8','strict') 
-    title = f.readline().replace('\n','').replace('\r','').strip()
-    path = os.path.join(OUT_DIR,'posts',title+'.html')
-    archive = f.readline().split(':')[-1].strip()
-    tags = f.readline().split(':')[-1]
+    f_lines = f.readlines()
+    ## title = f.readline().replace('\n','').replace('\r','').strip()
+    title = f_lines[0].replace('\n','').replace('\r','').strip()
+    path = os.path.join(con['OUTDIR'],'posts',title+'.html')
+    ## archive = f.readline().split(':')[-1].strip()
+    archive = f_lines[1].split(':')[-1].strip()
+    ## tags = f.readline().split(':')[-1]
+    tags = f_lines[2].split(':')[-1]
     tags = tags.replace(u'，',',').split(',')
     tags = [word.strip() for word in tags]
-    blank_line = f.readline()
+    ## blank_line = f.readline()
+    blank_line = f_lines[3]
     title,archive,tags = _properties_varify(title,archive,tags,blank_line)
     ## abstrct always use content's first 
     ## paragraph.I suppose this is split 
@@ -113,23 +129,14 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
         abstrct = f.read(max_lenth)
         content = ''.join([abstrct,f.read()])
     else:
-        text = f.read()
-        paragraph = _paragraphs(text.splitlines(True))
-        abstrct = paragraph.next()
-        try:
-            remainText = paragraph.next()
-        except StopIteration:
-            remainText = ''
-        content = ''.join([abstrct,remainText])
-    ## a backup
-    if Backup
-        con = _readConfig()
-        sf = codecs.open(os.path(con['BACKUP_DIR'],title),'w','utf-8')
-        f.seek(0)
-        sf.write(f.read())
-        sf.close()
+        ##text = f.read()
+        ## force break line
+        lines = [line.strip('\n') +'  ' + '\n' for line in f_lines[4:]]
+        text = ''.join(lines)
+        abstrct,content = _paragraphs(text.splitlines(True))
+        abstrct_lines = [line.strip('\n') +'  ' + '\n' for line in abstrct]
+        content = '\n'.join([abstrct,content])
 
-    f.close()
     ## use misaka process markdown
     renderer = BleepRenderer()
     md = m.Markdown(renderer,
@@ -139,19 +146,32 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
 
     node = Node(timestamp = m_time,title=title,path = path,archive=archive,tags=tags,content=content,abstrct=abstrct)
 
+    ## a backup
+    ## is file in the backup dir?
+    ## if it is right,no need backup
+    ## else backup
+    abspath = os.path.abspath(filename)
+    dirname = os.path.dirname(abspath)
+    backupdir = os.path.join(con['MAIN_PATH'],con['BACKUP_DIR'])
+    if Backup and dirname != backupdir:
+        sf = codecs.open(os.path.join(con['BACKUP_DIR'],title),'w','utf-8')
+        f.seek(0)
+        sf.write(f.read())
+        sf.close()
+    f.close()
+
     ## Use list or dict?
     ## My answer is list.
     ## Because dict can't be sort.
 
-    def compare(node1,node2):
-        return cmp(node1.TimeStamp,node2.TimeStamp)
+
 
     if Nodes == None:
         Nodes = _getNodes()
 
         if node.Title not in [o.Title for o in Nodes]: 
             Nodes.append(node)
-            Nodes.sort(compare,reverse=True)
+            Nodes.sort(_compare,reverse=True)
             _renderToHtml(node)
     
         else:
@@ -163,7 +183,7 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
                         del Nodes[i]
                         break
                 Nodes.append(node)
-                Nodes.sort(compare,reverse=True)
+                Nodes.sort(_compare,reverse=True)
                 _renderToHtml(node)
 
         _writeNodes(Nodes)            
@@ -171,7 +191,7 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
     else:
         Nodes.append(node)
         _renderToHtml(node)
-    return node
+    return Nodes
 
 def show(reverse = False):
     Nodes = _getNodes() 
@@ -238,16 +258,17 @@ def _renderToPage(Nodes):
         f.write(html)
         f.close()
 
-def page():
-    Nodes = _getNodes()
+def page(Nodes=None):
+    if Nodes == None:
+        Nodes = _getNodes()
     _renderToPage(Nodes)
 
 def postAll(dir_name=None):
-''' clear up Nodes and files.Rebuild all from backupdir'''
+    ''' clear up Nodes and files.Rebuild all from backupdir '''
     Nodes = _getNodes()
     config = _readConfig()
     outdir = os.path.join(config['MAIN_PATH'],config['OUTDIR'])
-    backupdir = os.path.join(config['MAIN_PAIN'],config['BACKUP_DIR'])
+    backupdir = os.path.join(config['MAIN_PATH'],config['BACKUP_DIR'])
     ## clear up outdir 
     for root,dirs,files in os.walk(outdir):
         for name in files:
@@ -256,11 +277,14 @@ def postAll(dir_name=None):
         dir_name = backupdir
         Nodes = []
     for root,dirs,files in os.walk(dir_name):
-        for filename in files:
-            post(filename,Nodes)
+        for name in files:
+            filename = os.path.join(root,name)
+            Nodes = post(filename,Nodes=Nodes)
+    Nodes.sort(_compare,reverse=True)
+    page(Nodes)
     _writeNodes(Nodes)
 
 
 
 if __name__ == '__main__':
-    PostAll() 
+    postAll()
