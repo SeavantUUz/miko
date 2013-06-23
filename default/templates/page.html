@@ -1,13 +1,14 @@
-{% extends "post.html" %}
+{% extends "layout.html" %}
 
 {% block main %}
+{% for post in posts %}
 <div class="hentry">
-    <h1 class="entry-title">{{post.title}}</h1>
-    {%- if post.description %}
-    <div class="entry-description">{{post.description}}</div>
-    {%- endif %}
+    <h2 class="entry-title">
+    	<a href={{post.Path}}>{{post.Title}}</a>
+    </h2>
     <div class="entry-content">
-        {{post.content}}
+        {{post.Abstrct}}
     </div>
 </div>
+{%- endfor %}
 {% endblock %}

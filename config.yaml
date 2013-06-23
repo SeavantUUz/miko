@@ -1,8 +1,10 @@
 OUTDIR:          outdir
+BACKUP_DIR:      backup
 MAIN_PATH:       /home/aprocysanae/github/PDBshoujo/
 THEME_DIR:       default
 NAME:            早苗的空想庭院
 AUTHOR:          AprocySanae
 HOMEPAGE:        www.kochiya.me
 VERSION:         0.1
+POSTS_NUM:       7
 DESCRIPTION:     早苗控

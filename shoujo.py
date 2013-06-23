@@ -78,12 +78,12 @@ def _renderToHtml(node):
     env = Environment(loader=PackageLoader(site.themeDir,'templates'))
     template = env.get_template('post.html')
     html = template.render(post=node,site=site)
-    f = codecs.open(os.path.join(site.outDir,node.Title+'.html'),'w','utf-8')
+    f = codecs.open(os.path.join(site.outDir,'posts',node.Title+'.html'),'w','utf-8')
     f.write(html)
     f.close()
 
 
-def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None):
+def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
     ''' convert markdown file to html,to let the process more clearly,please remember the below rules:
         1. the first line is your article's title
         2. the second line your should written as this:
@@ -97,7 +97,7 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None):
     ## make sure every line is decode utf-8
     f = codecs.open(filename,'r','utf-8','strict') 
     title = f.readline().replace('\n','').replace('\r','').strip()
-    path = os.path.join(OUT_DIR,title+'.html')
+    path = os.path.join(OUT_DIR,'posts',title+'.html')
     archive = f.readline().split(':')[-1].strip()
     tags = f.readline().split(':')[-1]
     tags = tags.replace(u'，',',').split(',')
@@ -121,8 +121,15 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None):
         except StopIteration:
             remainText = ''
         content = ''.join([abstrct,remainText])
+    ## a backup
+    if Backup
+        con = _readConfig()
+        sf = codecs.open(os.path(con['BACKUP_DIR'],title),'w','utf-8')
+        f.seek(0)
+        sf.write(f.read())
+        sf.close()
 
-
+    f.close()
     ## use misaka process markdown
     renderer = BleepRenderer()
     md = m.Markdown(renderer,
@@ -145,6 +152,7 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None):
         if node.Title not in [o.Title for o in Nodes]: 
             Nodes.append(node)
             Nodes.sort(compare,reverse=True)
+            _renderToHtml(node)
     
         else:
             print u'\n确定更新 %s ? yes/no: ' % node.Title
@@ -156,12 +164,13 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None):
                         break
                 Nodes.append(node)
                 Nodes.sort(compare,reverse=True)
+                _renderToHtml(node)
 
         _writeNodes(Nodes)            
 
     else:
         Nodes.append(node)
-    _renderToHtml(node)
+        _renderToHtml(node)
     return node
 
 def show(reverse = False):
@@ -193,7 +202,63 @@ def remove(index):
         show()
         return False
 
-    
+def _splitList(List,n):
+    i = 0
+    nlist = []
+    while i+n <= len(List):
+        nlist.append(List[i:i+n])
+        i += n
+    nlist.append(List[i:])
+    return nlist
+
+def _renderToPage(Nodes):
+    config = _readConfig()
+    site = Site(config)
+    L_nodes = _splitList(Nodes,config['POSTS_NUM'])
+    env = Environment(loader=PackageLoader(site.themeDir,'templates'))
+    template = env.get_template('page.html')
+    for i,nodes in enumerate(L_nodes):
+        before_page = True
+        next_page = True
+        ## only one page
+        if len(L_nodes) == 1:
+            before_page = False
+            next_page = False
+        ## not only one page
+        elif i == 0:
+            before_page = False
+        elif i == len(L_nodes):
+            next_page = False
+        html = template.render(posts=nodes,pagen=i,site=site,before_page=before_page,next_page=next_page)
+        if i == 0:
+            f = codecs.open(os.path.join(site.outDir,'home.html'),'w','utf-8')
+        else:
+            pagename = u'page%d.html' % i
+            f = codecs.open(os.path.join(site.outDir,pagename),'w','utf-8')
+        f.write(html)
+        f.close()
+
+def page():
+    Nodes = _getNodes()
+    _renderToPage(Nodes)
+
+def PostAll(dir_name=None):
+''' clear up Nodes and files.Rebuild all from backupdir'''
+    Nodes = []
+    config = _readConfig()
+    outdir = os.path.join(config['MAIN_PATH'],config['OUTDIR'])
+    backupdir = os.path.join(config['MAIN_PAIN'],config['BACKUP_DIR'])
+    ## clear up outdir 
+    for root,dirs,files in os.walk(outdir):
+        for name in files:
+            os.remove(os.path.join(root,name))
+    if dir_name == None:
+        dir_name = backupdir
+    for root,dirs,files in os.walk(dir_name):
+        for filename in files:
+            post(filename,Nodes)
+
+
 
 if __name__ == '__main__':
-    post('example1') 
+    PostAll() 
