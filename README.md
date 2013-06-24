@@ -2,7 +2,7 @@ PDBshoujo
 =========
 A static blog written by python . 
 
-**Usage**
+**Usage**  
 *Be sure your os is Linux.ShoujoA can not run on windows*
 
 * clone it.`git clone git@github.com:SeavantUUz/ShoujoA.git`
