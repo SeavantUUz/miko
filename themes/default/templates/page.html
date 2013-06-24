@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block main %}
+{% for post in posts %}
+<div class="hentry">
+    <h2 class="entry-title">
+    	<a href="../{{post.Path}}">{{post.Title}}</a>
+    </h2>
+    <div class="entry-content">
+        {{post.Abstrct}}
+    </div>
+</div>
+{%- endfor %}
+{% endblock %}

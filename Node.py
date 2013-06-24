@@ -44,11 +44,15 @@ class Site(object):
 
     @property
     def themePath(self):
-        return os.path.join(self._path,self._themeDir)
+        return os.path.join(self._path,'themes',self._themeDir)
 
     @property
     def outDir(self):
         return self._outDir
+
+    @property
+    def mainDir(self):
+        return self._path
 
 ## each article
 ## you can also add some other properties

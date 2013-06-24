@@ -1,7 +1,7 @@
 # coding:utf-8
-import os,time,codecs,sys,pickle
+import os,time,codecs,sys,pickle,shutil
 import yaml
-from jinja2 import Environment,PackageLoader
+from jinja2 import Environment,FileSystemLoader,TemplateNotFound
 import houdini as h
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
@@ -12,6 +12,7 @@ from Node import Node,Site
 
 
 class BleepRenderer(HtmlRenderer,SmartyPants):
+    ''' code highlight '''
     def block_code(self, text, lang):
         if not lang:
             return '\n<pre><code>%s</code></pre>\n' % \
@@ -60,6 +61,7 @@ def _properties_varify(title,archive,tags,blank):
     return (title,archive,tags)
 
 def _getNodes():
+    ''' unpick data.pick,getNodes'''
     try:
         pick = open('data.pick','rb')
     except IOError:
@@ -70,28 +72,108 @@ def _getNodes():
     return Nodes
 
 def _writeNodes(Nodes):
+    ''' writeNodes'''
     pick = open('data.pick','wb')
     pickle.dump(Nodes,pick) 
     pick.close()
 
 def _readConfig():
+    ''' read config file '''
     config = yaml.load(open('config.yaml','r'))
     return config
 
 
 def _renderToHtml(node):
+    ''' convert file to html '''
     config = _readConfig()
     site = Site(config)
-    env = Environment(loader=PackageLoader(site.themeDir,'templates'))
+    ## get themes path and import it
+    path = os.path.join(site.mainDir,'themes',site.themeDir)
+    env = Environment(loader=FileSystemLoader(os.path.join(path,'templates')))
     template = env.get_template('post.html')
     html = template.render(post=node,site=site)
-    f = codecs.open(os.path.join(site.outDir,'posts',node.Title+'.html'),'w','utf-8')
+    f = codecs.open(os.path.join(site.mainDir,site.outDir,'posts',node.Title+'.html'),'w','utf-8')
     f.write(html)
     f.close()
+
+def _splitList(List,n):
+    ''' split list each element of list is on same page'''
+    i = 0
+    nlist = []
+    while i+n <= len(List):
+        nlist.append(List[i:i+n])
+        i += n
+    nlist.append(List[i:])
+    return nlist
 
 def _compare(node1,node2):
     return cmp(node1.TimeStamp,node2.TimeStamp)
 
+
+def _renderToPage(Nodes):
+    config = _readConfig()
+    site = Site(config)
+    L_nodes = _splitList(Nodes,config['POSTS_NUM'])
+    path = os.path.join(site.mainDir,'themes',site.themeDir)
+    env = Environment(loader=FileSystemLoader(os.path.join(path,'templates')))
+    template = env.get_template('page.html')
+    for i,nodes in enumerate(L_nodes):
+        before_page = True
+        next_page = True
+        ## only one page
+        if len(L_nodes) == 1:
+            before_page = False
+            next_page = False
+        ## not only one page
+        elif i == 0:
+            before_page = False
+        elif i == len(L_nodes):
+            next_page = False
+        html = template.render(posts=nodes,pagen=i,site=site,before_page=before_page,next_page=next_page)
+        if i == 0:
+            f = codecs.open(os.path.join(site.mainDir,site.outDir,'home.html'),'w','utf-8')
+        else:
+            pagename = u'page%d.html' % i
+            f = codecs.open(os.path.join(site.mainDir,site.outDir,pagename),'w','utf-8')
+        f.write(html)
+        f.close()
+
+def page(Nodes=None):
+    ''' rebuild page '''
+    if Nodes == None:
+        Nodes = _getNodes()
+    _renderToPage(Nodes)
+
+def init():
+    ''' init your environment.In face,it's only build some necessary dirs '''
+    Nodes = []
+    config = _readConfig()
+    main_path = config['MAIN_PATH']
+    outdir = config['OUTDIR']
+    backup_dir = config['BACKUP_DIR']
+    theme_dir = config['THEME_DIR']
+    try:
+        os.mkdir(main_path)
+    except OSError:
+        pass
+    try:
+        shutil.copytree('themes',os.path.join(main_path,'themes'))
+    except OSError:
+        shutil.rmtree(os.path.join(main_path,'themes'))
+        shutil.copytree('themes',os.path.join(main_path,'themes'))
+    try:
+        os.mkdir(os.path.join(main_path,outdir))
+    except OSError:
+        pass
+    try:
+        os.mkdir(os.path.join(main_path,outdir,'posts'))
+    except OSError:
+        pass
+    try:
+        os.mkdir(os.path.join(main_path,backup_dir))
+    except OSError:
+        pass
+    _writeNodes(Nodes)
 
 def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
     ''' convert markdown file to html,to let the process more clearly,please remember the below rules:
@@ -127,7 +209,14 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
     ## of getting abstrct.by lenth or by blankline
     if auto_abstrct == True:
         abstrct = f.read(max_lenth)
-        content = ''.join([abstrct,f.read()])
+        f_lines = [line.strip('\n' + '  ' +'\n' for line in abstrct.split('\n'))]
+        abstrct = ''.join(f_lines)
+
+        remain_text = f.read()
+        f_lines = [line.strip('\n' + '  ' +'\n' for line in remain_text.split('\n'))]
+        remain_text = ''.join(f_lines)
+
+        content = '\n'.join([abstrct,remain_text])
     else:
         ##text = f.read()
         ## force break line
@@ -156,7 +245,7 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
     dirname = os.path.dirname(abspath)
     backupdir = os.path.join(con['MAIN_PATH'],con['BACKUP_DIR'])
     if Backup and dirname != backupdir:
-        sf = codecs.open(os.path.join(con['BACKUP_DIR'],title),'w','utf-8')
+        sf = codecs.open(os.path.join(backupdir,title),'w','utf-8')
         f.seek(0)
         sf.write(f.read())
         sf.close()
@@ -175,6 +264,9 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
             Nodes.append(node)
             Nodes.sort(_compare,reverse=True)
             _renderToHtml(node)
+            ## rebulid pages
+            page(Nodes)
+
     
         else:
             print u'\n确定更新 %s ? yes/no: ' % node.Title
@@ -187,6 +279,7 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
                 Nodes.append(node)
                 Nodes.sort(_compare,reverse=True)
                 _renderToHtml(node)
+                page(Nodes)
 
         _writeNodes(Nodes)            
 
@@ -217,6 +310,8 @@ def show(reverse = False):
             print u'%5d:  %s' % (i,o.Title)
         return True
 
+
+
 def remove(index):
     Nodes = _getNodes()
     try:
@@ -226,6 +321,7 @@ def remove(index):
             Nodes.remove(Nodes[index])
         _writeNodes(Nodes)
         print u'\n已删除'
+        page(Nodes)
         return True
     except IndexError:
         print u'\n移除失败，不存在的索引: %d' % index
@@ -233,46 +329,6 @@ def remove(index):
         show()
         return False
 
-def _splitList(List,n):
-    i = 0
-    nlist = []
-    while i+n <= len(List):
-        nlist.append(List[i:i+n])
-        i += n
-    nlist.append(List[i:])
-    return nlist
-
-def _renderToPage(Nodes):
-    config = _readConfig()
-    site = Site(config)
-    L_nodes = _splitList(Nodes,config['POSTS_NUM'])
-    env = Environment(loader=PackageLoader(site.themeDir,'templates'))
-    template = env.get_template('page.html')
-    for i,nodes in enumerate(L_nodes):
-        before_page = True
-        next_page = True
-        ## only one page
-        if len(L_nodes) == 1:
-            before_page = False
-            next_page = False
-        ## not only one page
-        elif i == 0:
-            before_page = False
-        elif i == len(L_nodes):
-            next_page = False
-        html = template.render(posts=nodes,pagen=i,site=site,before_page=before_page,next_page=next_page)
-        if i == 0:
-            f = codecs.open(os.path.join(site.outDir,'home.html'),'w','utf-8')
-        else:
-            pagename = u'page%d.html' % i
-            f = codecs.open(os.path.join(site.outDir,pagename),'w','utf-8')
-        f.write(html)
-        f.close()
-
-def page(Nodes=None):
-    if Nodes == None:
-        Nodes = _getNodes()
-    _renderToPage(Nodes)
 
 def postAll(dir_name=None):
     ''' clear up Nodes and files.Rebuild all from backupdir '''
@@ -294,6 +350,15 @@ def postAll(dir_name=None):
     Nodes.sort(_compare,reverse=True)
     page(Nodes)
     _writeNodes(Nodes)
+    print u'\n已重提交所有posts，更新成功'
+
+
+def updateThemes():
+    config = _readConfig()
+    main_path = config['MAIN_PATH']
+    shutil.rmtree(os.path.join(main_path,'themes'))
+    shutil.copytree('themes',os.path.join(main_path,'themes'))
+    print u'\n更新主题成功'
 
 
 
