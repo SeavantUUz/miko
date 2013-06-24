@@ -30,7 +30,7 @@ A static blog written by python .
 * you can always run `./shoujo.py --post filename` to submit a new post
 * you can also run `.shoujo.py --show` to see your posted posts
 * run `.shoujo.py --remove index` will delete a post
-* run `.shoujo.py --postAll` will rebuild all posts from backup dir.Or you can run `.shoujo.py --postAll dirname` to add some posts from dir
+* run `.shoujo.py --postAll 0` will rebuild all posts from backup dir.Or you can run `.shoujo.py --postAll dirname` to add some posts from dir
 * enjoy your ShoujoA!!
 * more feathers is on the road.
 
