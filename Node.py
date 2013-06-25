@@ -44,7 +44,7 @@ class Site(object):
 
     @property
     def themePath(self):
-        return os.path.join(self._path,'themes',self._themeDir)
+        return os.path.join('themes',self._themeDir)
 
     @property
     def outDir(self):

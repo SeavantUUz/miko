@@ -130,11 +130,11 @@ def _renderToPage(Nodes):
         elif i == len(L_nodes):
             next_page = False
         html = template.render(posts=nodes,pagen=i,site=site,before_page=before_page,next_page=next_page)
-        if i == 0:
-            f = codecs.open(os.path.join(site.mainDir,site.outDir,'home.html'),'w','utf-8')
-        else:
-            pagename = u'page%d.html' % i
-            f = codecs.open(os.path.join(site.mainDir,site.outDir,pagename),'w','utf-8')
+        #if i == 0:
+            #   f = codecs.open(os.path.join(site.mainDir,site.outDir,'home.html'),'w','utf-8')
+        #else:
+        pagename = u'page%d.html' % i
+        f = codecs.open(os.path.join(site.mainDir,site.outDir,pagename),'w','utf-8')
         f.write(html)
         f.close()
 
@@ -175,16 +175,7 @@ def init():
         pass
     _writeNodes(Nodes)
 
-def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
-    ''' convert markdown file to html,to let the process more clearly,please remember the below rules:
-        1. the first line is your article's title
-        2. the second line your should written as this:
-        archive: python
-        or leave it as a empty line
-        3. the third line is the tags,like second line,you should written as this:
-        tags:python,sanae
-        4. please always leave the forth line as a empty line which could help the program varify all you written above are right '''
-
+def _setNode(filename,auto_abstrct=False,max_lenth=1000):
     con = _readConfig()
     m_time = os.path.getmtime(filename)
     ## make sure every line is decode utf-8
@@ -236,16 +227,32 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
     content = md.render(content)
 
     node = Node(timestamp = m_time,title=title,path = path,archive=archive,tags=tags,content=content,abstrct=abstrct)
+    f.close()
+    return node
 
+def post(filename,Nodes = None,Backup = True):
+    ''' convert markdown file to html,to let the process more clearly,please remember the below rules:
+        1. the first line is your article's title
+        2. the second line your should written as this:
+        archive: python
+        or leave it as a empty line
+        3. the third line is the tags,like second line,you should written as this:
+        tags:python,sanae
+        4. please always leave the forth line as a empty line which could help the program varify all you written above are right '''
+
+
+    f = codecs.open(filename,'r','utf-8','strict') 
+    con = _readConfig()
     ## a backup
     ## is file in the backup dir?
     ## if it is right,no need backup
     ## else backup
+    node = _setNode(filename)
     abspath = os.path.abspath(filename)
     dirname = os.path.dirname(abspath)
     backupdir = os.path.join(con['MAIN_PATH'],con['BACKUP_DIR'])
     if Backup and dirname != backupdir:
-        sf = codecs.open(os.path.join(backupdir,title),'w','utf-8')
+        sf = codecs.open(os.path.join(backupdir,node.Title),'w','utf-8')
         f.seek(0)
         sf.write(f.read())
         sf.close()
@@ -254,8 +261,6 @@ def post(filename,auto_abstrct=False,max_lenth=1000,Nodes = None,Backup = True):
     ## Use list or dict?
     ## My answer is list.
     ## Because dict can't be sort.
-
-
 
     if Nodes == None:
         Nodes = _getNodes()
@@ -314,11 +319,14 @@ def show(reverse = False):
 
 def remove(index):
     Nodes = _getNodes()
+    config = _readConfig()
     try:
         print u'\n真的希望删除 %d: %s ? (yes/no)' % (index,Nodes[index].Title)
         choose = raw_input()
         if choose == 'yes':
+            os.remove(os.path.join(config['MAIN_PATH'],config['BACKUP_DIR'],Nodes[index].Title))
             Nodes.remove(Nodes[index])
+
         _writeNodes(Nodes)
         print u'\n已删除'
         page(Nodes)
