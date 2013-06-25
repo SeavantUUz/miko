@@ -1,4 +1,4 @@
-PDBshoujo
+ShoujoA
 =========
 A static blog written by python . 
 
@@ -28,10 +28,11 @@ A static blog written by python .
     * the remains line is your post's content
     * ShoujoA will auto find first blank line in content . If found,the former content will be treated as abstrct.
 * you can always run `./shoujo.py --post filename` to submit a new post
-* you can also run `.shoujo.py --show` to see your posted posts
-* run `.shoujo.py --remove index` will delete a post
-* run `.shoujo.py --postAll 0` will rebuild all posts from backup dir.Or you can run `.shoujo.py --postAll dirname` to add some posts from dir
+* you can also run `./shoujo.py --show` to see your posted posts
+* run `./shoujo.py --remove index` will delete a post
+* run `./shoujo.py --postAll 0` will rebuild all posts from backup dir.Or you can run `./shoujo.py --postAll dirname` to add some posts from dir
 * enjoy your ShoujoA!!
+* run `./shoujo --updateThemes` to update all themes
 * more feathers is on the road.
 
 
