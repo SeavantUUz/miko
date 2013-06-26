@@ -325,6 +325,8 @@ def remove(index):
         choose = raw_input()
         if choose == 'yes':
             os.remove(os.path.join(config['MAIN_PATH'],config['BACKUP_DIR'],Nodes[index].Title))
+            print os.path.join(config['MAIN_PATH'],config['OUTDIR'],'posts',Nodes[index].Title+'.html')
+            os.remove(os.path.join(config['MAIN_PATH'],config['OUTDIR'],'posts',Nodes[index].Title+'.html'))
             Nodes.remove(Nodes[index])
 
         _writeNodes(Nodes)
@@ -367,6 +369,11 @@ def updateThemes():
     shutil.rmtree(os.path.join(main_path,'themes'))
     shutil.copytree('themes',os.path.join(main_path,'themes'))
     print u'\n更新主题成功'
+
+def insert(filename,index):
+    config = _readConfig()
+    node = _setNode(filename)
+
 
 
 
