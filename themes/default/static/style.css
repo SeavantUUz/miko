@@ -342,3 +342,6 @@ hr.end {
 #disqus_thread {
     margin-top: 50px;
 }
+
+.alignleft { float: left }
+.alignright { float: right}
