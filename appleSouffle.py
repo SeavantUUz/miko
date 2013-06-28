@@ -155,7 +155,11 @@ def init():
     try:
         os.mkdir(main_path)
     except OSError:
-        pass
+        print u'\n检测已存在目录树，删掉它么?(yes/no)'
+        a = raw_input()
+        if a == 'yes':
+            shutil.rmtree(main_path)
+            os.mkdir(main_path)
     try:
         shutil.copytree('themes',os.path.join(main_path,'themes'))
     except OSError:
@@ -173,6 +177,7 @@ def init():
         os.mkdir(os.path.join(main_path,backup_dir))
     except OSError:
         pass
+    print u'目录结构建立完毕'
     _writeNodes(Nodes)
 
 def _setNode(filename,auto_abstrct=False,max_lenth=1000):
@@ -249,10 +254,9 @@ def _writeBackup(node,filename,config,mtime=None):
     ## mtime is a tuple first arg is acess time
     ## second arg is modified time
     ## a lazy way is set atime and mtime to same
-    if mtime:
+    if mtime != None:
         backupdir = os.path.join(config['MAIN_PATH'],config['BACKUP_DIR'])
         os.utime(os.path.join(backupdir,node.Title),mtime)
-
     return True
 
 def _nodeToPost(node,filename,config,Nodes,Backup=True,Insert=False):
@@ -321,7 +325,8 @@ def post(filename,Nodes = None,Backup = True):
     ## else backup
     node = _setNode(filename)
     _nodeToPost(node,filename,con,Nodes = Nodes,Backup = Backup)
-    print u'\n提交完成'
+    if Nodes == None:
+        print u'\n提交完成'
     return Nodes
 
 def show(reverse = False):
@@ -380,6 +385,7 @@ def postAll(dir_name=None):
     for root,dirs,files in os.walk(dir_name):
         for name in files:
             filename = os.path.join(root,name)
+            time.sleep(1)
             Nodes = post(filename,Nodes=Nodes)
     Nodes.sort(_compare,reverse=True)
     page(Nodes)
@@ -417,6 +423,7 @@ def insert(filename,index):
     ## remove old node
     if node.Title in [o.Title for o in Nodes]: 
         r_index,Nodes = _deleteANode(node,Nodes,None,None)
+
         if r_index < index:
             if index>=len(Nodes):
                 index -= 1
@@ -429,22 +436,21 @@ def insert(filename,index):
     lenth = len(Nodes)
     if index == 0:
         try:
-            time = Nodes[1].TimeStamp-1
+            time = Nodes[1].TimeStamp+0.01
         except IndexError:pass
     elif index == lenth-1:
         try:
-            time = Nodes[lenth-2].TimeStamp+1
+            time = Nodes[lenth-2].TimeStamp-0.01
         except IndexError:pass
     else:
         time = (Nodes[index-1].TimeStamp+Nodes[index+1].TimeStamp)/2
         
-    print index
     node.setTimestamp(time)
     Nodes[index].setTimestamp(time)
 
     _renderToHtml(node)
-    _writeBackup(node,filename,config,mtime=(0,0))
-    Nodes.sort(_compare)
+    _writeBackup(node,filename,config,mtime=(time,time))
+    Nodes.sort(_compare,reverse=True)
     _writeNodes(Nodes)
     show()
 

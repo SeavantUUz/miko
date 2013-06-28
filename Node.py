@@ -107,7 +107,6 @@ class Node(object):
     def setTimestamp(self,time):
         self._timestamp = time
 
-
     def __unicode__(self):
         return self._title
 
