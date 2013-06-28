@@ -104,6 +104,9 @@ class Node(object):
         date = datetime.datetime.fromtimestamp(self._timestamp)
         return date.strftime('%Y-%m-%d:%H')
 
+    def setTimestamp(self,time):
+        self._timestamp = time
+
 
     def __unicode__(self):
         return self._title

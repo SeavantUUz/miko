@@ -230,33 +230,35 @@ def _setNode(filename,auto_abstrct=False,max_lenth=1000):
     f.close()
     return node
 
-def post(filename,Nodes = None,Backup = True):
-    ''' convert markdown file to html,to let the process more clearly,please remember the below rules:
-        1. the first line is your article's title
-        2. the second line your should written as this:
-        archive: python
-        or leave it as a empty line
-        3. the third line is the tags,like second line,you should written as this:
-        tags:python,sanae
-        4. please always leave the forth line as a empty line which could help the program varify all you written above are right '''
 
-
-    f = codecs.open(filename,'r','utf-8','strict') 
-    con = _readConfig()
-    ## a backup
-    ## is file in the backup dir?
-    ## if it is right,no need backup
-    ## else backup
-    node = _setNode(filename)
+def _writeBackup(node,filename,config,mtime=None):
+    '''write a backup file'''
     abspath = os.path.abspath(filename)
     dirname = os.path.dirname(abspath)
-    backupdir = os.path.join(con['MAIN_PATH'],con['BACKUP_DIR'])
-    if Backup and dirname != backupdir:
+    backupdir = os.path.join(config['MAIN_PATH'],config['BACKUP_DIR'])
+
+    if dirname != backupdir:
+        f = codecs.open(filename,'r','utf-8','strict') 
         sf = codecs.open(os.path.join(backupdir,node.Title),'w','utf-8')
         f.seek(0)
         sf.write(f.read())
         sf.close()
-    f.close()
+        f.close()
+
+    ## modified the backup file's modified time
+    ## mtime is a tuple first arg is acess time
+    ## second arg is modified time
+    ## a lazy way is set atime and mtime to same
+    if mtime:
+        backupdir = os.path.join(config['MAIN_PATH'],config['BACKUP_DIR'])
+        os.utime(os.path.join(backupdir,node.Title),mtime)
+
+    return True
+
+def _nodeToPost(node,filename,config,Nodes,Backup=True,Insert=False):
+    if Backup:
+        _writeBackup(node,filename,config)
+
 
     ## Use list or dict?
     ## My answer is list.
@@ -299,7 +301,27 @@ def post(filename,Nodes = None,Backup = True):
                         del Nodes[i]
                         Nodes.append(node)
                         break
+    return Nodes
             
+def post(filename,Nodes = None,Backup = True):
+    ''' convert markdown file to html,to let the process more clearly,please remember the below rules:
+        1. the first line is your article's title
+        2. the second line your should written as this:
+        archive: python
+        or leave it as a empty line
+        3. the third line is the tags,like second line,you should written as this:
+        tags:python,sanae
+        4. please always leave the forth line as a empty line which could help the program varify all you written above are right '''
+
+
+    con = _readConfig()
+    ## a backup
+    ## is file in the backup dir?
+    ## if it is right,no need backup
+    ## else backup
+    node = _setNode(filename)
+    _nodeToPost(node,filename,con,Nodes = Nodes,Backup = Backup)
+    print u'\n提交完成'
     return Nodes
 
 def show(reverse = False):
@@ -317,25 +339,27 @@ def show(reverse = False):
 
 
 
-def remove(index):
-    Nodes = _getNodes()
-    config = _readConfig()
+def remove(index,Nodes = None ):
+    if not Nodes:
+        Nodes = _getNodes()
+        config = _readConfig()
     try:
         print u'\n真的希望删除 %d: %s ? (yes/no)' % (index,Nodes[index].Title)
         choose = raw_input()
         if choose == 'yes':
+            ## delete all relate files
             os.remove(os.path.join(config['MAIN_PATH'],config['BACKUP_DIR'],Nodes[index].Title))
-            print os.path.join(config['MAIN_PATH'],config['OUTDIR'],'posts',Nodes[index].Title+'.html')
             os.remove(os.path.join(config['MAIN_PATH'],config['OUTDIR'],'posts',Nodes[index].Title+'.html'))
             Nodes.remove(Nodes[index])
+            print u'\n已删除'
 
         _writeNodes(Nodes)
-        print u'\n已删除'
         page(Nodes)
         return True
     except IndexError:
         print u'\n移除失败，不存在的索引: %d' % index
         print '\n------------------------------'
+        print u'\n所有已经提交的文件:'
         show()
         return False
 
@@ -370,12 +394,57 @@ def updateThemes():
     shutil.copytree('themes',os.path.join(main_path,'themes'))
     print u'\n更新主题成功'
 
+def _deleteANode(node,Nodes,l_index,r_index):
+    remove_index = None
+    for i,o in enumerate(Nodes[l_index:r_index]):
+        if o.Title == node.Title:
+            index = i
+            del Nodes[i]
+            break
+    return index,Nodes
+
 def insert(filename,index):
     config = _readConfig()
+    Nodes = _getNodes()
+    ## test index is right
+    assert isinstance(index,int)
+    assert index >= 0 and index <= len(Nodes)
+
+    ## remove_index = 65535
+    # get node
     node = _setNode(filename)
 
+    ## remove old node
+    if node.Title in [o.Title for o in Nodes]: 
+        r_index,Nodes = _deleteANode(node,Nodes,None,None)
+        if r_index < index:
+            if index>=len(Nodes):
+                index -= 1
 
+    Nodes.insert(index,node)
+    ## reset index
+    ## you could draw a picture to study the regular
+    ## if index > remove_index:
+    ##    index -= 1
+    lenth = len(Nodes)
+    if index == 0:
+        try:
+            time = Nodes[1].TimeStamp-1
+        except IndexError:pass
+    elif index == lenth-1:
+        try:
+            time = Nodes[lenth-2].TimeStamp+1
+        except IndexError:pass
+    else:
+        time = (Nodes[index-1].TimeStamp+Nodes[index+1].TimeStamp)/2
+        
+    print index
+    node.setTimestamp(time)
+    Nodes[index].setTimestamp(time)
 
+    _renderToHtml(node)
+    _writeBackup(node,filename,config,mtime=(0,0))
+    Nodes.sort(_compare)
+    _writeNodes(Nodes)
+    show()
 
-if __name__ == '__main__':
-    postAll()
