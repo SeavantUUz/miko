@@ -7,7 +7,9 @@ A static blog written by python .
 
 * clone it.`git clone git@github.com:SeavantUUz/ShoujoA.git`
 * cd and into the ShoujoA
-* input `source env/bin/activate`
+* install [virtualenv](http://www.virtualenv.org/en/latest/) 
+* in ShoujoA dir run `virtualenv env` to active virtual env
+* run `env/bin/activate`
 * edit `config.yaml` by your favorite editor.Revise it to your config.
     * MAIN_PATH is where dirs conpose
     * OUTDIR is a dirname where your htmls be placed
