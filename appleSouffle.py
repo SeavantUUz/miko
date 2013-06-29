@@ -43,6 +43,16 @@ def _paragraphs(text,is_separator=unicode.isspace,joiner=''.join):
         content = joiner(paragraph)
     return abstrct,content
 
+def _splitList(List,n):
+    ''' split list each element of list is on same page'''
+    i = 0
+    nlist = []
+    while i+n <= len(List):
+        nlist.append(List[i:i+n])
+        i += n
+    nlist.append(List[i:])
+    return nlist
+
 ## varify_properties
 ## Maybe you can add some new ways 
 ## to make sure all your properties
@@ -53,7 +63,7 @@ def _properties_varify(title,archive,tags,blank):
     if blank != '\n':
         raise Exception("\nPlease obey the rules.First Four line have some special means\n")
     if title == None:
-        raise Exception("\nYou should not let the first paragraph empty! Rechek your blog please!\n")
+        raise Exception("\nYou should not let the first paragraph empty! Recheck your blog please!\n")
     if archive == '':
         archive = u'未命名'
     if tags[0] == u'':
@@ -88,27 +98,14 @@ def _renderToHtml(node):
     config = _readConfig()
     site = Site(config)
     ## get themes path and import it
-    path = os.path.join(site.mainDir,'themes',site.themeDir)
+    path = os.path.join(config['MAIN_PATH'],'themes',config['THEME_DIR'])
+    ## jinja will handle the error
     env = Environment(loader=FileSystemLoader(os.path.join(path,'templates')))
     template = env.get_template('post.html')
     html = template.render(post=node,site=site)
-    f = codecs.open(os.path.join(site.mainDir,site.outDir,'posts',node.Title+'.html'),'w','utf-8')
+    f = codecs.open(os.path.join(config['MAIN_PATH'],config['OUTDIR'],'posts',node.Title+'.html'),'w','utf-8')
     f.write(html)
     f.close()
-
-def _splitList(List,n):
-    ''' split list each element of list is on same page'''
-    i = 0
-    nlist = []
-    while i+n <= len(List):
-        nlist.append(List[i:i+n])
-        i += n
-    nlist.append(List[i:])
-    return nlist
-
-def _compare(node1,node2):
-    return cmp(node1.TimeStamp,node2.TimeStamp)
-
 
 def _renderToPage(Nodes):
     config = _readConfig()
@@ -127,16 +124,20 @@ def _renderToPage(Nodes):
         ## not only one page
         elif i == 0:
             before_page = False
-        elif i == len(L_nodes):
+        elif i == len(L_nodes)-1:
             next_page = False
         html = template.render(posts=nodes,pagen=i,site=site,before_page=before_page,next_page=next_page)
         #if i == 0:
             #   f = codecs.open(os.path.join(site.mainDir,site.outDir,'home.html'),'w','utf-8')
         #else:
-        pagename = u'page%d.html' % i
-        f = codecs.open(os.path.join(site.mainDir,site.outDir,pagename),'w','utf-8')
+        pagename = u'page_%d.html' % i
+        f = codecs.open(os.path.join(config['MAIN_PATH'],config['OUTDIR'],pagename),'w','utf-8')
         f.write(html)
         f.close()
+
+def _compare(node1,node2):
+    return cmp(node2.TimeStamp,node1.TimeStamp)
+
 
 def page(Nodes=None):
     ''' rebuild page '''
@@ -263,17 +264,12 @@ def _nodeToPost(node,filename,config,Nodes,Backup=True,Insert=False):
     if Backup:
         _writeBackup(node,filename,config)
 
-
-    ## Use list or dict?
-    ## My answer is list.
-    ## Because dict can't be sort.
-
     if Nodes == None:
         Nodes = _getNodes()
 
         if node.Title not in [o.Title for o in Nodes]: 
             Nodes.append(node)
-            Nodes.sort(_compare,reverse=True)
+            Nodes.sort(_compare)
             _renderToHtml(node)
             ## rebulid pages
             page(Nodes)
@@ -288,7 +284,7 @@ def _nodeToPost(node,filename,config,Nodes,Backup=True,Insert=False):
                         del Nodes[i]
                         break
                 Nodes.append(node)
-                Nodes.sort(_compare,reverse=True)
+                Nodes.sort(_compare)
                 _renderToHtml(node)
                 page(Nodes)
 
@@ -327,6 +323,8 @@ def post(filename,Nodes = None,Backup = True):
     _nodeToPost(node,filename,con,Nodes = Nodes,Backup = Backup)
     if Nodes == None:
         print u'\n提交完成'
+    else:
+        print u'\n已提交 %s' % node.Title
     return Nodes
 
 def show(reverse = False):
@@ -387,7 +385,7 @@ def postAll(dir_name=None):
             filename = os.path.join(root,name)
             time.sleep(1)
             Nodes = post(filename,Nodes=Nodes)
-    Nodes.sort(_compare,reverse=True)
+    Nodes.sort(_compare)
     page(Nodes)
     _writeNodes(Nodes)
     print u'\n已重提交所有posts，更新成功'
@@ -419,14 +417,14 @@ def insert(filename,index):
     ## remove_index = 65535
     # get node
     node = _setNode(filename)
+    lenth = len(Nodes)
 
     ## remove old node
     if node.Title in [o.Title for o in Nodes]: 
         r_index,Nodes = _deleteANode(node,Nodes,None,None)
 
-        if r_index < index:
-            if index>=len(Nodes):
-                index -= 1
+    if index == lenth:
+        index -= 1
 
     Nodes.insert(index,node)
     ## reset index
@@ -450,7 +448,7 @@ def insert(filename,index):
 
     _renderToHtml(node)
     _writeBackup(node,filename,config,mtime=(time,time))
-    Nodes.sort(_compare,reverse=True)
+    Nodes.sort(_compare)
     _writeNodes(Nodes)
     show()
 
