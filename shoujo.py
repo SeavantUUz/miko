@@ -2,7 +2,7 @@
 # coding:utf-8
 
 import argparse
-from appleSouffle import post,remove,postAll,show,init,updateThemes,insert,archive
+from appleSouffle import post,remove,postAll,show,init,updateThemes,insert,archive,tags
 
 def _parserInput():
     parser = argparse.ArgumentParser(description = 'A static blog engine')
@@ -14,6 +14,7 @@ def _parserInput():
     parser.add_argument("--postAll",nargs='?',const='default',dest="postAll",help='Rebuild all posts,you can pass a dirname,or notion .Pass 0 to it will set rebuild from backup dir.ex:./shoujo.py --postAll 0 or --postAll=/home/xxx')
     parser.add_argument("--updateThemes",action = "store_true",dest="updateThemes",help='Update all of your themes.Each time you add a new theme and you should run it')
     parser.add_argument("--archive",action="store_true",dest="archive")
+    parser.add_argument("--tags",action="store_true",dest="tags")
 
     args = parser.parse_args()
 
@@ -46,6 +47,8 @@ def main():
         updateThemes()
     elif options.archive:
         archive()
+    elif options.tags:
+        tags()
 
 if __name__ == "__main__":
     main()

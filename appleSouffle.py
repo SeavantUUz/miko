@@ -141,6 +141,13 @@ def _ListToDir(Nodes):
         dic.setdefault(node.Archive,[]).append(node)
     return dic
 
+def _ListTagsToDir(Nodes):
+    dic = {}
+    for node in Nodes:
+        for tag in node.Tags:
+            dic.setdefault(tag,[]).append(node)
+    return dic
+
 def _compare(node1,node2):
     return cmp(node2.TimeStamp,node1.TimeStamp)
 
@@ -150,6 +157,7 @@ def page(Nodes=None):
     if Nodes == None:
         Nodes = _getNodes()
     archive()
+    tags()
     _renderToPage(Nodes)
 
 
@@ -169,6 +177,22 @@ def archive():
     f = codecs.open(os.path.join(config['MAIN_PATH'],config['OUTDIR'],'archive.html'),'w','utf-8')
     f.write(html)
     f.close()
+
+def tags():
+    '''build tags page'''
+    Nodes = _getNodes() 
+    config = _readConfig()
+    site = Site(config)
+    path = os.path.join(config["MAIN_PATH"],'themes',config["THEME_DIR"])
+    env = Environment(loader=FileSystemLoader(os.path.join(path,'templates')))
+    template = env.get_template('tags.html')
+    tags_dir = _ListTagsToDir(Nodes)
+    TagsTitle = config["TAGS_TITLE"]
+    html = template.render(TagsTitle = TagsTitle,Tags= tags_dir,site = site)
+    f = codecs.open(os.path.join(config['MAIN_PATH'],config['OUTDIR'],'tags.html'),'w','utf-8')
+    f.write(html)
+    f.close()
+
 
 def init():
     ''' init your environment.In face,it's only build some necessary dirs '''
@@ -352,6 +376,7 @@ def post(filename,Nodes = None,Backup = True):
     else:
         print u'\n已提交 %s' % node.Title
     archive()
+    tags()
     return Nodes
 
 def show(reverse = False):
@@ -386,6 +411,7 @@ def remove(index,Nodes = None ):
         _writeNodes(Nodes)
         page(Nodes)
         archive()
+        tags()
         return True
     except IndexError:
         print u'\n移除失败，不存在的索引: %d' % index
@@ -417,6 +443,7 @@ def postAll(dir_name=None):
     page(Nodes)
     _writeNodes(Nodes)
     archive()
+    tags()
     print u'\n已重提交所有posts，更新成功'
 
 
@@ -480,5 +507,6 @@ def insert(filename,index):
     Nodes.sort(_compare)
     _writeNodes(Nodes)
     archive()
+    tags()
     show()
 
