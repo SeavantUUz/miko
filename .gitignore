@@ -7,3 +7,5 @@ test.py
 a.txt
 data.pick
 outdir/*
+env/*
+blog/*
