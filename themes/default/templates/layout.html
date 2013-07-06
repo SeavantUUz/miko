@@ -17,10 +17,17 @@
             {% block header %}
             <h1 id="brand"><a href="/">{{site.name}}</a></h1>
             {% endblock %}
+        {% if post_flag %}
         <nav id="nav" role="navigation">
-            <a href="./archive">archive</a>
+            <a href="../archive.html">archive</a>
+            <a href="../tags.html">tags</a>
+        </nav>
+        {% else %}
+        <nav id="nav" role="navigation">
+            <a href="./archive.html">archive</a>
             <a href="./tags.html">tags</a>
         </nav>
+        {% endif %}
         </header>
 
         <div id="main">
@@ -70,7 +77,7 @@
 
 
         {% block beforejs %}{% endblock %}
-        <script type="text/javascript" src="{{site.themePath}}/static/mobile.js"></script>
+        <script type="text/javascript" src="/{{site.themePath}}/static/mobile.js"></script>
         {% block afterjs %}{% endblock %}
     </body>
 </html>

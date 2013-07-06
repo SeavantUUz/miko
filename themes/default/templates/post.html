@@ -25,7 +25,7 @@
 
     <div class="entry-tags">
         {% for tag in post.Tags %}
-        {{tag}}
+        <a href="../tags.html#{{tag}}">{{tag}}<a>
         {%- endfor %}
     </div>
 

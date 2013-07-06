@@ -102,7 +102,7 @@ def _renderToHtml(node):
     ## jinja will handle the error
     env = Environment(loader=FileSystemLoader(os.path.join(path,'templates')))
     template = env.get_template('post.html')
-    html = template.render(post=node,site=site)
+    html = template.render(post=node,site=site,post_flag = True)
     f = codecs.open(os.path.join(config['MAIN_PATH'],config['OUTDIR'],'posts',node.Title+'.html'),'w','utf-8')
     f.write(html)
     f.close()
@@ -126,7 +126,7 @@ def _renderToPage(Nodes):
             before_page = False
         elif i == len(L_nodes)-1:
             next_page = False
-        html = template.render(posts=nodes,pagen=i,site=site,before_page=before_page,next_page=next_page,page_flag=True)
+        html = template.render(posts=nodes,pagen=i,site=site,before_page=before_page,next_page=next_page)
         #if i == 0:
             #   f = codecs.open(os.path.join(site.mainDir,site.outDir,'home.html'),'w','utf-8')
         #else:
