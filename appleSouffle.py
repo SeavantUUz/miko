@@ -126,7 +126,7 @@ def _renderToPage(Nodes):
             before_page = False
         elif i == len(L_nodes)-1:
             next_page = False
-        html = template.render(posts=nodes,pagen=i,site=site,before_page=before_page,next_page=next_page)
+        html = template.render(posts=nodes,pagen=i,site=site,before_page=before_page,next_page=next_page,page_flag=True)
         #if i == 0:
             #   f = codecs.open(os.path.join(site.mainDir,site.outDir,'home.html'),'w','utf-8')
         #else:
@@ -134,6 +134,12 @@ def _renderToPage(Nodes):
         f = codecs.open(os.path.join(config['MAIN_PATH'],config['OUTDIR'],pagename),'w','utf-8')
         f.write(html)
         f.close()
+
+def _ListToDir(Nodes):
+    dic = {}
+    for node in Nodes:
+        dic.setdefault(node.Archive,[]).append(node)
+    return dic
 
 def _compare(node1,node2):
     return cmp(node2.TimeStamp,node1.TimeStamp)
@@ -143,7 +149,26 @@ def page(Nodes=None):
     ''' rebuild page '''
     if Nodes == None:
         Nodes = _getNodes()
+    archive()
     _renderToPage(Nodes)
+
+
+def archive():
+    '''build archive page'''
+    ## collect basic elements
+    ## like Nodes,config and template
+    Nodes = _getNodes() 
+    config = _readConfig()
+    site = Site(config)
+    path = os.path.join(config["MAIN_PATH"],'themes',config["THEME_DIR"])
+    env = Environment(loader=FileSystemLoader(os.path.join(path,'templates')))
+    template = env.get_template('archive.html')
+    archive_dir = _ListToDir(Nodes)
+    ArchiveTitle = config["ARCHIVE_TITLE"]
+    html = template.render(ArchiveTitle = ArchiveTitle,Archive = archive_dir,site = site)
+    f = codecs.open(os.path.join(config['MAIN_PATH'],config['OUTDIR'],'archive.html'),'w','utf-8')
+    f.write(html)
+    f.close()
 
 def init():
     ''' init your environment.In face,it's only build some necessary dirs '''
@@ -302,6 +327,7 @@ def _nodeToPost(node,filename,config,Nodes,Backup=True,Insert=False):
                         Nodes.append(node)
                         break
     return Nodes
+
             
 def post(filename,Nodes = None,Backup = True):
     ''' convert markdown file to html,to let the process more clearly,please remember the below rules:
@@ -325,6 +351,7 @@ def post(filename,Nodes = None,Backup = True):
         print u'\n提交完成'
     else:
         print u'\n已提交 %s' % node.Title
+    archive()
     return Nodes
 
 def show(reverse = False):
@@ -358,6 +385,7 @@ def remove(index,Nodes = None ):
 
         _writeNodes(Nodes)
         page(Nodes)
+        archive()
         return True
     except IndexError:
         print u'\n移除失败，不存在的索引: %d' % index
@@ -388,6 +416,7 @@ def postAll(dir_name=None):
     Nodes.sort(_compare)
     page(Nodes)
     _writeNodes(Nodes)
+    archive()
     print u'\n已重提交所有posts，更新成功'
 
 
@@ -450,5 +479,6 @@ def insert(filename,index):
     _writeBackup(node,filename,config,mtime=(time,time))
     Nodes.sort(_compare)
     _writeNodes(Nodes)
+    archive()
     show()
 

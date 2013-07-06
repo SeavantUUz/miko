@@ -3,6 +3,7 @@ OUTDIR:          outdir
 BACKUP_DIR:      backup
 THEME_DIR:       default
 NAME:            早苗的空想庭院
+ARCHIVE_TITLE:    Sanae no Archive
 AUTHOR:          AprocySanae
 HOMEPAGE:        www.kochiya.me
 VERSION:         0.1

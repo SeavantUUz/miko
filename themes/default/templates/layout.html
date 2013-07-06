@@ -17,6 +17,10 @@
             {% block header %}
             <h1 id="brand"><a href="/">{{site.name}}</a></h1>
             {% endblock %}
+        <nav id="nav" role="navigation">
+            <a href="./archive">archive</a>
+            <a href="#">tags</a>
+        </nav>
         </header>
 
         <div id="main">
@@ -31,6 +35,14 @@
             {% block footer %}
             <hr class="end" />
 
+            {% if page_flag %}
+            <ul style="list-style:none;padding:0;margin:0">
+            <li style="float:left"><a href="#">&laquo; 古い記事</a></li>
+            <li style="float:right"><a href="#">&laquo; 新しい記事</a></li>
+            <div style="clear:both"></div>
+            </ul>
+            {% endif %}
+
             <p class="copyright">
             <span class="software">
                 Powered by <a href="{{site.homepage}}">{{site.author}}</a> {{site.version}},
@@ -41,6 +53,7 @@
             </p>
             {% endblock %}
         </footer>
+
 
         {% block beforejs %}{% endblock %}
         <script type="text/javascript" src="{{site.themePath}}/static/mobile.js"></script>
