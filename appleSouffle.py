@@ -21,7 +21,7 @@ class BleepRenderer(HtmlRenderer,SmartyPants):
         formatter = HtmlFormatter()
         return highlight(text, lexer, formatter)
 
-def _paragraphs(text,is_separator=unicode.isspace,joiner=''.join):
+def _paragraphs(text,is_separator=unicode.isspace,joiner='\n'.join):
     ''' To split the text to abstrct and content '''
 
     isAbstrct = False
@@ -255,11 +255,11 @@ def _setNode(filename,auto_abstrct=False,max_lenth=1000):
     ## of getting abstrct.by lenth or by blankline
     if auto_abstrct == True:
         abstrct = f.read(max_lenth)
-        f_lines = [line.strip('\n' + '  ' +'\n' for line in abstrct.split('\n'))]
+        f_lines = [line.strip('\n') + '  ' +'\n' for line in abstrct.split('\n')]
         abstrct = ''.join(f_lines)
 
         remain_text = f.read()
-        f_lines = [line.strip('\n' + '  ' +'\n' for line in remain_text.split('\n'))]
+        f_lines = [line.strip('\n') + '  ' +'\n' for line in remain_text.split('\n')]
         remain_text = ''.join(f_lines)
 
         content = '\n'.join([abstrct,remain_text])
@@ -269,7 +269,6 @@ def _setNode(filename,auto_abstrct=False,max_lenth=1000):
         lines = [line.strip('\n') +'  ' + '\n' for line in f_lines[4:]]
         text = ''.join(lines)
         abstrct,content = _paragraphs(text.splitlines(True))
-        abstrct_lines = [line.strip('\n') +'  ' + '\n' for line in abstrct]
         content = '\n'.join([abstrct,content])
         if not abstrct:
             abstrct = content
