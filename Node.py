@@ -14,6 +14,7 @@ class Site(object):
             self._homepage    = conf_dict['HOMEPAGE']
             self._version     = conf_dict['VERSION']
             self._description = conf_dict['DESCRIPTION']
+            self._shortName   = conf_dict['DISQUS_SHORT_NAME']
 
         except KeyError:
             raise Exception('Ouch! Properties not enough!!\n')
@@ -53,6 +54,10 @@ class Site(object):
     @property
     def mainDir(self):
         return self._path
+
+    @property
+    def webShortName(self):
+        return self._shortName
 
 ## each article
 ## you can also add some other properties

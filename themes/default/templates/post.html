@@ -19,6 +19,7 @@
             by <a class="url fn" href="{{site.homepage}}">{{site.author}}</a>
         </span>
     </div>
+
     <div class="entry-content">
         {{post.Content}}
     </div>
@@ -28,6 +29,18 @@
         <a href="../tags.html#{{tag}}">{{tag}}<a>
         {%- endfor %}
     </div>
+
+
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = '{{site.webShortName}}';
+        var disqus_title = '{{post.Title}}';
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
 
 </div>
 
