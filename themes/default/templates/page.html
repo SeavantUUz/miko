@@ -1,11 +1,23 @@
 {% extends "layout.html" %}
 
+{% block afterstyle %}
+{% if site.description %}<meta name="description" content="{{site.description }}" />{% endif %}
+{% endblock %}
+
 {% block main %}
 {% for post in posts %}
 <div class="hentry">
     <h2 class="entry-title">
     	<a href="../{{post.Path}}">{{post.Title}}</a>
     </h2>
+    <div class="entry-meta">
+        <time class="updated" datetime="{{post.Date}}">
+            {{post.Date}}
+        </time>
+        <span class="author vcard">
+            by <a class="url fn" href="{{site.homepage}}">{{site.author}}</a>
+        </span>
+    </div>
     <div class="entry-content">
         {{post.Abstrct}}
     </div>

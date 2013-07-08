@@ -17,17 +17,12 @@
             {% block header %}
             <h1 id="brand"><a href="/">{{site.name}}</a></h1>
             {% endblock %}
-        {% if post_flag %}
+
         <nav id="nav" role="navigation">
-            <a href="../archive.html">archive</a>
-            <a href="../tags.html">tags</a>
+            <a href="/{{site.outDir}}/archive.html">archive</a>
+            <a href="/{{site.outDir}}/tags.html">tags</a>
         </nav>
-        {% else %}
-        <nav id="nav" role="navigation">
-            <a href="./archive.html">archive</a>
-            <a href="./tags.html">tags</a>
-        </nav>
-        {% endif %}
+
         </header>
 
         <div id="main">
