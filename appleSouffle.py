@@ -447,6 +447,7 @@ def postAll(dir_name=None):
     tags()
     print u'\n已重提交所有posts，更新成功'
     aboutMe()
+    links()
 
 
 def updateThemes():
