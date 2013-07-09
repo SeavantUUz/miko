@@ -229,6 +229,8 @@ def init():
         pass
     print u'目录结构建立完毕'
     _writeNodes(Nodes)
+    aboutMe()
+    links()
 
 def _setNode(filename,auto_abstrct=False,max_lenth=1000):
     con = _readConfig()
@@ -444,6 +446,7 @@ def postAll(dir_name=None):
     archive()
     tags()
     print u'\n已重提交所有posts，更新成功'
+    aboutMe()
 
 
 def updateThemes():
@@ -508,4 +511,57 @@ def insert(filename,index):
     archive()
     tags()
     show()
+
+def aboutMe():
+    config = _readConfig()
+    site = Site(config)
+    path = os.path.join(config["MAIN_PATH"],'themes',config["THEME_DIR"])
+    env = Environment(loader=FileSystemLoader(os.path.join(path,'templates')))
+    template = env.get_template('aboutMe.html')
+    me = codecs.open('aboutMe.md','rb','utf-8').read()
+    if not me:
+        print u'你还没填写aboutMe.md那个文件呢！'
+        sys.exit()
+    me_lines = [line.strip('\n') + '  ' +'\n' for line in me.split('\n')]
+    me = '\n'.join(me_lines)
+
+    renderer = BleepRenderer()
+    md = m.Markdown(renderer,
+            extensions=m.EXT_FENCED_CODE | m.EXT_NO_INTRA_EMPHASIS)
+    AboutMe = md.render(me)
+
+    html = template.render(AboutMe=AboutMe,site=site)
+    f = codecs.open(os.path.join(config['MAIN_PATH'],config['OUTDIR'],'aboutMe.html'),'w','utf-8')
+    f.write(html)
+    f.close()
+    print '\nAbout Me 生成结束'
+
+
+def links():
+    config = _readConfig()
+    site = Site(config)
+    path = os.path.join(config["MAIN_PATH"],'themes',config["THEME_DIR"])
+    env = Environment(loader=FileSystemLoader(os.path.join(path,'templates')))
+    ## links.html is same to aboutMe.html , So 
+    ## I decided to use aboutMe.html to instead links.html
+    template = env.get_template('aboutMe.html')
+    me = codecs.open('links.md','rb','utf-8').read()
+    if not me:
+        print u'你还没填写links.md那个文件呢！'
+        sys.exit()
+
+    me_lines = [line.strip('\n') + '  ' +'\n' for line in me.split('\n')]
+    me = '\n'.join(me_lines)
+
+    renderer = BleepRenderer()
+    md = m.Markdown(renderer,
+            extensions=m.EXT_FENCED_CODE | m.EXT_NO_INTRA_EMPHASIS)
+    AboutMe = md.render(me)
+
+    html = template.render(AboutMe=AboutMe,site=site)
+    f = codecs.open(os.path.join(config['MAIN_PATH'],config['OUTDIR'],'links.html'),'w','utf-8')
+    f.write(html)
+    f.close()
+    print '\nlinks page 生成结束'
+
 

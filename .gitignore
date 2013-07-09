@@ -9,3 +9,6 @@ data.pick
 outdir/*
 env/*
 blog/*
+favicon*
+bigfavicon*
+

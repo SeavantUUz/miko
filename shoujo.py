@@ -2,7 +2,7 @@
 # coding:utf-8
 
 import argparse
-from appleSouffle import post,remove,postAll,show,init,updateThemes,insert,archive,tags
+from appleSouffle import post,remove,postAll,show,init,updateThemes,insert,archive,tags,aboutMe,links
 
 def _parserInput():
     parser = argparse.ArgumentParser(description = 'A static blog engine')
@@ -15,6 +15,8 @@ def _parserInput():
     parser.add_argument("--updateThemes",action = "store_true",dest="updateThemes",help='Update all of your themes.Each time you add a new theme and you should run it')
     parser.add_argument("--archive",action="store_true",dest="archive")
     parser.add_argument("--tags",action="store_true",dest="tags")
+    parser.add_argument("--aboutMe",action="store_true",dest="aboutMe")
+    parser.add_argument("--links",action="store_true",dest="links")
 
     args = parser.parse_args()
 
@@ -49,6 +51,10 @@ def main():
         archive()
     elif options.tags:
         tags()
+    elif options.aboutMe:
+        aboutMe()
+    elif options.links:
+        links()
 
 if __name__ == "__main__":
     main()
