@@ -424,6 +424,7 @@ def remove(index,Nodes = None ):
 
 def postAll(dir_name=None):
     ''' clear up Nodes and files.Rebuild all from backupdir '''
+    updateTheme()
     Nodes = _getNodes()
     config = _readConfig()
     outdir = os.path.join(config['MAIN_PATH'],config['OUTDIR'])

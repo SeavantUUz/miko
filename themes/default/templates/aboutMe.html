@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 
+{% if about_me%}
 {% block title %}About Me{% endblock %}
+{% else %}
+{% block title %}Links{% endblock %}
 
 {% block main %}
   {{AboutMe}}
