@@ -23,7 +23,6 @@ class BleepRenderer(HtmlRenderer,SmartyPants):
 
 def _paragraphs(text,is_separator=unicode.isspace,joiner='\n'.join):
     ''' To split the text to abstrct and content '''
-
     isAbstrct = False
     paragraph = []
     abstrct = ''
@@ -40,7 +39,19 @@ def _paragraphs(text,is_separator=unicode.isspace,joiner='\n'.join):
         else:
             paragraph.append(line)
     if paragraph:
-        content = joiner(paragraph)
+        codeIndex = [index for index,line in enumerate(paragraph) if line[:3] == '```']
+        codeIndex.insert(0,0)
+        codeIndex.append(len(paragraph)-1)
+        contentParts = []
+        for i in range(len(codeIndex)-1):
+            currentIndex = codeIndex[i]
+            nextIndex = codeIndex[i+1]
+            if i % 2:
+                contentPart = ''.join(paragraph[currentIndex:nextIndex])
+            else:
+                contentPart = joiner(paragraph[currentIndex:nextIndex])
+            contentParts.append(contentPart)
+        content = joiner(contentParts)
     return abstrct,content
 
 def _splitList(List,n):
