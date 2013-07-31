@@ -41,7 +41,7 @@ def _paragraphs(text,is_separator=unicode.isspace,joiner='\n'.join):
     if paragraph:
         codeIndex = [index for index,line in enumerate(paragraph) if line[:3] == '```']
         codeIndex.insert(0,0)
-        codeIndex.append(len(paragraph)-1)
+        codeIndex.append(len(paragraph))
         contentParts = []
         for i in range(len(codeIndex)-1):
             currentIndex = codeIndex[i]
