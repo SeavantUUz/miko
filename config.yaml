@@ -1,4 +1,4 @@
-MAIN_PATH:       /home/aprocysanae/web
+MAIN_PATH:       /home/AprocySanae/web
 OUTDIR:          www
 BACKUP_DIR:      backup
 THEME_DIR:       default
@@ -7,8 +7,7 @@ ARCHIVE_TITLE:   Sanaeのカテゴリー
 TAGS_TITLE:      Sanaeのタグ
 AUTHOR:          AprocySanae
 HOMEPAGE:        http://blog.kochiya.me
-## You disqus's short name
-DISQUS_SHORT_NAME:  sanae
+DISQUS_SHORT_NAME: sanae
 VERSION:         0.1
 POSTS_NUM:       7
 DESCRIPTION:     这里是风笳，这个庭园的主人，众所周知的早苗控一枚。这个博客会时不时发布一些我自己的研究成果或者碎碎念。如果您喜欢技术、鬼扯、早苗和早苗的话，我会很乐意加你为好友。同时由于抖M体质，所以我也很乐意接受您的批评。敬请不吝赐教。

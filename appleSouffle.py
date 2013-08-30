@@ -544,7 +544,7 @@ def aboutMe():
     AboutMe = md.render(me)
 
     html = template.render(AboutMe=AboutMe,site=site)
-    f = codecs.open(os.path.join(config['MAIN_PATH'],config['OUTDIR'],'aboutMe.html'),'w','utf-8')
+    f = codecs.open(os.path.join(config['MAIN_PATH'],config['OUTDIR'],'about_me.html'),'w','utf-8')
     f.write(html)
     f.close()
     print '\nAbout Me 生成结束'

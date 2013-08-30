@@ -13,8 +13,8 @@
 
 联系我?
 
-* mail    : axdiaoqi220@gmail.com
-* github  : https://github.com/SeavantUUz
-* twitter : @AprocySanae
-* G+      : Sanae Aprocry
-* 新浪微博: @AprocySanae (很少使用)
+* mail    : *<sanae@kochiya.me>*(推荐) or *<axdiaoqi220@gmail.com>*
+* github  : <https://github.com/SeavantUUz>
+* twitter : [@AprocySanae](https://twitter.com/AprocySanae)
+* 新浪微博: [@AprocySanae (很少使用)](http://weibo.com/AprocySanae)
+* Google Author  :<a href="https://plus.google.com/113819291149083106836?rel=author">Sanae Aprocry</a>

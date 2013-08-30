@@ -6,55 +6,45 @@ error_log /home/AprocySanae/error/error.log;
 worker_rlimit_nofile 1024;
 events
 {
-use epoll;
-worker_connections 65535;
+	use epoll;
+	worker_connections 65535;
 
 }
 
 http
 {
-include        mime.types;
-default_type   application/octet-stream;
-charset                       utf-8;
-large_names_hash_bucket_size  128;
-client_max_body_size   8m
-tcp_nopush     on;
-tcp_nodelay    on;
-keepalive_timeout   120;
+	include        mime.types;
+	default_type   application/octet-stream;
+	charset                       utf-8;
+	large_names_hash_bucket_size  128;
+	client_max_body_size   8m
+	tcp_nopush     on;
+	tcp_nodelay    on;
+	keepalive_timeout   120;
 
-gzip on; 
-gzip_min_length 1k; 
-gzip_buffers 4 16k; 
-gzip_http_version 1.0; 
-gzip_comp_level 2; 
+	gzip on; 
+	gzip_min_length 1k; 
+	gzip_buffers 4 16k; 
+	gzip_http_version 1.0; 
+	gzip_comp_level 2; 
 
-server
-{
-listen 80;
-server_name blog.kochiya.me;
+	server
+	{
+		listen 80;
+		server_name AprocySanae.jp1.rpvhost.net;
 
-location / {
+		location / {
 
-root /home/AprocySanae/web;
-}
+		index www/page0.html;
+		root /home/AprocySanae/web;
+		}
 
-# index
-rewrite /$ /www/page_0.html;
-rewrite /index\..* /www/page_0.html;
-# archive
-rewrite /archive\..* /www/archive.html;
-# tags
-rewrite /tags\..* /www/tags.html;
-# about_me
-rewrite /about_me\..* /www/about_me.html;
-# links
-rewrite /links\..* /www/links.html;
+	error_page 404 /404.html;
+	location /404.html {
+		root /home/AprocySanae/web/themes;
 
-error_page 404 /themes/404.html;
+	}
 
-
-}
-
-}
+	}
 
 }

@@ -19,11 +19,12 @@
             {% endblock %}
 
         <nav id="nav" role="navigation">
-            <a href="/{{site.outDir}}/archive.html">Archive</a>
-            <a href="/{{site.outDir}}/tags.html">Tags</a>
-            <a href="/{{site.outDir}}/aboutMe.html">About</a>
+            <a href="/">Home</a>
+            <a href="/archive.html">Archive</a>
+            <a href="/tags.html">Tags</a>
+            <a href="/about_me.html">About</a>
+            <a href="/links.html">Links</a>
         </nav>
-
         </header>
 
         <div id="main">
@@ -40,22 +41,22 @@
 
             {% if before_page and next_page == False %}
             <ul style="list-style:none;padding:0;margin:0">
-            <li style="float:left"><a href="./page_{{pagen-1}}.html">&laquo; 古い記事</a></li>
+            <li style="float:left"><a href="/www/page_{{pagen-1}}.html">&laquo; 新しい記事</a></li>
             <div style="clear:both"></div>
             </ul>
             {% endif %}
 
             {% if before_page == False and next_page %}
             <ul style="list-style:none;padding:0;margin:0">
-            <li style="float:left"><a href="./page_{{pagen+1}}.html">&laquo; 新しい記事</a></li>
+            <li style="float:left"><a href="/www/page_{{pagen+1}}.html">&laquo; 古い記事</a></li>
             <div style="clear:both"></div>
             </ul>
             {% endif %}
 
             {% if before_page and next_page %}
             <ul style="list-style:none;padding:0;margin:0">
-            <li style="float:left"><a href="./page_{{pagen-1}}.html">&laquo; 古い記事</a></li>
-            <li style="float:right"><a href="./page_{{pagen+1}}.html">&laquo; 新しい記事</a></li>
+            <li style="float:left"><a href="/www/page_{{pagen-1}}.html">&laquo; 古い記事</a></li>
+            <li style="float:right"><a href="/www/page_{{pagen+1}}.html">&laquo; 新しい記事</a></li>
             <div style="clear:both"></div>
             </ul>
             {% endif %}

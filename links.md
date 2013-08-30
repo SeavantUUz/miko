@@ -9,3 +9,5 @@
 * [v2ex](http://www.v2ex.com/?r=KotiyaSanae)
 * [比特客栈的文艺复兴](http://bitinn.net/)
 * [Matrix67](http://www.matrix67.com/blog/)
+* [solu](http://solupro.org/)
+* [xautjzd](http://xautjzd.github.io/)
