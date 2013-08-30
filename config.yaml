@@ -1,4 +1,4 @@
-MAIN_PATH:       /home/AprocySanae/web
+MAIN_PATH:       /home/aprocysanae/web
 OUTDIR:          www
 BACKUP_DIR:      backup
 THEME_DIR:       default
@@ -6,7 +6,9 @@ NAME:            Sanaeの空想庭园
 ARCHIVE_TITLE:   Sanaeのカテゴリー
 TAGS_TITLE:      Sanaeのタグ
 AUTHOR:          AprocySanae
+EMAIL:           sanae@kochiya.me
 HOMEPAGE:        http://blog.kochiya.me
+FEEDURL:         feed.xml
 DISQUS_SHORT_NAME: sanae
 VERSION:         0.1
 POSTS_NUM:       7

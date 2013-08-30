@@ -1,5 +1,5 @@
 # coding:utf-8
-import os,time,codecs,sys,pickle,shutil
+import os,time,codecs,sys,pickle,shutil,datetime
 import yaml
 from jinja2 import Environment,FileSystemLoader,TemplateNotFound
 import houdini as h
@@ -576,5 +576,23 @@ def links():
     f.write(html)
     f.close()
     print '\nlinks page 生成结束'
+
+def feed():
+    config = _readConfig()
+    site = Site(config)
+    nodes = _getNodes()
+    path = os.path.join(config["MAIN_PATH"],'themes',config["THEME_DIR"])
+    print path
+    env = Environment(loader=FileSystemLoader(os.path.join(path,'templates')))
+    template = env.get_template('feed.xml')
+    timestamp = nodes[0].TimeStamp
+    date = datetime.datetime.fromtimestamp(timestamp)
+    latest_modified_time = date.strftime('%Y-%m-%dT%H:%M:%SZ')  
+    html = template.render(posts=nodes,site=site,latest_modified_time=latest_modified_time)
+    f = codecs.open(os.path.join(config['MAIN_PATH'],'feed.xml'),'w','utf-8')
+    f.write(html)
+    f.close()
+    print '\nfeed.xml 生成结束'
+
 
 

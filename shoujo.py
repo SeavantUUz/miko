@@ -2,7 +2,7 @@
 # coding:utf-8
 
 import argparse
-from appleSouffle import post,remove,postAll,show,init,updateThemes,insert,archive,tags,aboutMe,links
+from appleSouffle import post,remove,postAll,show,init,updateThemes,insert,archive,tags,aboutMe,links,feed
 
 def _parserInput():
     parser = argparse.ArgumentParser(description = 'A static blog engine')
@@ -17,6 +17,7 @@ def _parserInput():
     parser.add_argument("--tags",action="store_true",dest="tags")
     parser.add_argument("--aboutMe",action="store_true",dest="aboutMe")
     parser.add_argument("--links",action="store_true",dest="links")
+    parser.add_argument("--feed",action="store_true",dest="feed")
 
     args = parser.parse_args()
 
@@ -55,6 +56,8 @@ def main():
         aboutMe()
     elif options.links:
         links()
+    elif options.feed:
+        feed()
 
 if __name__ == "__main__":
     main()

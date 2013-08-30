@@ -15,6 +15,8 @@ class Site(object):
             self._version     = conf_dict['VERSION']
             self._description = conf_dict['DESCRIPTION']
             self._shortName   = conf_dict['DISQUS_SHORT_NAME']
+            self._feedurl     = conf_dict['FEEDURL']
+            self._email       = conf_dict['EMAIL']
 
         except KeyError:
             raise Exception('Ouch! Properties not enough!!\n')
@@ -58,6 +60,14 @@ class Site(object):
     @property
     def webShortName(self):
         return self._shortName
+
+    @property
+    def feedurl(self):
+        return self._feedurl
+
+    @property
+    def email(self):
+        return self._email
 
 ## each article
 ## you can also add some other properties
