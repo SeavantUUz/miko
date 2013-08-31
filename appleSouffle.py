@@ -169,6 +169,7 @@ def page(Nodes=None):
         Nodes = _getNodes()
     archive()
     tags()
+    feed()
     _renderToPage(Nodes)
 
 
@@ -389,6 +390,7 @@ def post(filename,Nodes = None,Backup = True):
         print u'\n已提交 %s' % node.Title
     archive()
     tags()
+    feed()
     return Nodes
 
 def show(reverse = False):
@@ -424,6 +426,7 @@ def remove(index,Nodes = None ):
         page(Nodes)
         archive()
         tags()
+        feed()
         return True
     except IndexError:
         print u'\n移除失败，不存在的索引: %d' % index
@@ -457,6 +460,7 @@ def postAll(dir_name=None):
     _writeNodes(Nodes)
     archive()
     tags()
+    feed()
     print u'\n已重提交所有posts，更新成功'
     aboutMe()
     links()
@@ -523,6 +527,7 @@ def insert(filename,index):
     _writeNodes(Nodes)
     archive()
     tags()
+    feed()
     show()
 
 def aboutMe():
@@ -578,6 +583,7 @@ def links():
     print '\nlinks page 生成结束'
 
 def feed():
+    updateThemes()
     config = _readConfig()
     site = Site(config)
     nodes = _getNodes()
@@ -592,7 +598,6 @@ def feed():
     f = codecs.open(os.path.join(config['MAIN_PATH'],'feed.xml'),'w','utf-8')
     f.write(html)
     f.close()
-    print '\nfeed.xml 生成结束'
 
 
 

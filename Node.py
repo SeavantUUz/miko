@@ -119,6 +119,11 @@ class Node(object):
         date = datetime.datetime.fromtimestamp(self._timestamp)
         return date.strftime('%Y-%m-%d:%H')
 
+    @property
+    def FeedDate(self):
+        date = datetime.datetime.fromtimestamp(self._timestamp)
+        return date.strftime('%Y-%m-%dT%H:%M:%SZ')
+
     def setTimestamp(self,time):
         self._timestamp = time
 

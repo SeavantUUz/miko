@@ -15,8 +15,8 @@
         <title type="html"><![CDATA[{{ post.Title }}]]></title>
         <link href="{{site.homepage}}/{{post.Path}}"/>
         <id>{{post.Title}}</id>
-        <updated>{{post.Date}}</updated>
-        <content type="html" xml:lang="zh-CN">
+        <updated>{{post.FeedDate}}</updated>
+        <content type="html" xml:lang="en">
             <![CDATA[ {{ post.Content }}
             ]]>
         </content>
