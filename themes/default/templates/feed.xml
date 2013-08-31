@@ -17,7 +17,7 @@
         <id>{{post.Title}}</id>
         <updated>{{post.FeedDate}}</updated>
         <content type="html" xml:lang="en">
-            <![CDATA[ {{ post.Content }}
+            <![CDATA[ {{ post.Abstrct}}
             ]]>
         </content>
     </entry>
