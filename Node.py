@@ -122,7 +122,8 @@ class Node(object):
     @property
     def FeedDate(self):
         date = datetime.datetime.fromtimestamp(self._timestamp)
-        return date.strftime('%Y-%m-%dT%H:%M:%SZ')
+        d = date.strftime('%Y-%m-%dT%H:%M:%S')
+        return d+'+00:00'
 
     def setTimestamp(self,time):
         self._timestamp = time

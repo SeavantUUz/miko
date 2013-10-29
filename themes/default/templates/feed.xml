@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>{{ site.name }}</title>
-    <link href="{{site.homepage}}/{{site.feedurl}}" />
-    <link href="{{site.homepage}}" rel="self" />
+    <link href="{{site.homepage}}/{{site.feedurl}}" rel="self"/>
+    <link href="{{site.homepage}}"/>
     <updated>{{latest_modified_time}}</updated>
     <author>
         <name>{{site.author}}</name>
         <email>{{site.email}}</email>
     </author>
-    <logo>{{site.homepage}}/favicon.ico</logo>
     <id>{{site.homepage}}/{{site.feedurl}}</id>
     {% for post in posts -%}
     <entry>
-        <title type="html"><![CDATA[{{ post.Title }}]]></title>
+        <author>{{site.author}}</author>
+        <title type="html">{{ post.Title }}</title>
         <link href="{{site.homepage}}/{{post.Path}}"/>
         <id>{{post.Title}}</id>
         <updated>{{post.FeedDate}}</updated>
         <content type="html" xml:lang="en">
-            <![CDATA[ {{ post.Abstrct}}
+            <![CDATA[ {{ post.Abstrct }}
             ]]>
         </content>
     </entry>

@@ -58,7 +58,7 @@ def _splitList(List,n):
     ''' split list each element of list is on same page'''
     i = 0
     nlist = []
-    while i+n <= len(List):
+    while i+n <= len(List)-1:
         nlist.append(List[i:i+n])
         i += n
     nlist.append(List[i:])
@@ -562,7 +562,7 @@ def links():
     env = Environment(loader=FileSystemLoader(os.path.join(path,'templates')))
     ## links.html is same to aboutMe.html , So 
     ## I decided to use aboutMe.html to instead links.html
-    template = env.get_template('aboutMe.html')
+    template = env.get_template('links.html')
     me = codecs.open('links.md','rb','utf-8').read()
     if not me:
         print u'你还没填写links.md那个文件呢！'
@@ -588,12 +588,11 @@ def feed():
     site = Site(config)
     nodes = _getNodes()
     path = os.path.join(config["MAIN_PATH"],'themes',config["THEME_DIR"])
-    print path
     env = Environment(loader=FileSystemLoader(os.path.join(path,'templates')))
     template = env.get_template('feed.xml')
     timestamp = nodes[0].TimeStamp
     date = datetime.datetime.fromtimestamp(timestamp)
-    latest_modified_time = date.strftime('%Y-%m-%dT%H:%M:%SZ')  
+    latest_modified_time = date.strftime('%Y-%m-%dT%H:%M:%S') + '+00:00' 
     html = template.render(posts=nodes,site=site,latest_modified_time=latest_modified_time)
     f = codecs.open(os.path.join(config['MAIN_PATH'],'feed.xml'),'w','utf-8')
     f.write(html)

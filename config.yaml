@@ -1,4 +1,4 @@
-MAIN_PATH:       /home/aprocysanae/web
+MAIN_PATH:       /home/AprocySanae/web
 OUTDIR:          www
 BACKUP_DIR:      backup
 THEME_DIR:       default
