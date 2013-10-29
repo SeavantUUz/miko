@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}小伙伴们{% endblock %}
+
+{% block main %}
+{{AboutMe}}
+
+<div class="ds-thread" data-thread-key="links" data-title="links" data-url="http://blog.kochiya.me/links.html" data-author-key="AprocySanae"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"aprocysanae"};
+        (function() {
+                var ds = document.createElement('script');
+                ds.type = 'text/javascript';ds.async = true;
+                ds.src = 'http://static.duoshuo.com/embed.js';
+                ds.charset = 'UTF-8';
+                (document.getElementsByTagName('head')[0] 
+                || document.getElementsByTagName('body')[0]).appendChild(ds);
+        })();
+        </script>
+<!-- Duoshuo Comment END -->
+</div>
+
+{% endblock %}
