@@ -1,135 +1,40 @@
-# coding:utf-8
-import datetime
-import os
+#coding:utf-8
+import os,calendar,datetime
 
-## Your website's config
-class Site(object):
-    def __init__(self,conf_dict):
-        try:
-            self._outDir      = conf_dict['OUTDIR']
-            self._path        = conf_dict['MAIN_PATH']
-            self._themeDir    = conf_dict['THEME_DIR']
-            self._name        = conf_dict['NAME']
-            self._author      = conf_dict['AUTHOR']
-            self._homepage    = conf_dict['HOMEPAGE']
-            self._version     = conf_dict['VERSION']
-            self._description = conf_dict['DESCRIPTION']
-            self._shortName   = conf_dict['DISQUS_SHORT_NAME']
-            self._feedurl     = conf_dict['FEEDURL']
-            self._email       = conf_dict['EMAIL']
-
-        except KeyError:
-            raise Exception('Ouch! Properties not enough!!\n')
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def author(self):
-        return self._author
-
-    @property
-    def homepage(self):
-        return self._homepage
-
-    @property
-    def version(self):
-        return self._version
-
-    @property
-    def description(self):
-        return self._description
-
-    @property
-    def themeDir(self):
-        return self._themeDir
-
-    @property
-    def themePath(self):
-        return os.path.join('themes',self._themeDir)
-
-    @property
-    def outDir(self):
-        return self._outDir
-
-    @property
-    def mainDir(self):
-        return self._path
-
-    @property
-    def webShortName(self):
-        return self._shortName
-
-    @property
-    def feedurl(self):
-        return self._feedurl
-
-    @property
-    def email(self):
-        return self._email
-
-## each article
-## you can also add some other properties
 class Node(object):
-    def __init__(self,*args,**kwargs):
+    def __init__(self,**kwargs):
         try:
-            self._title     = kwargs['title']
-            self._timestamp = kwargs['timestamp']
-            self._path      = kwargs['path']
-            self._tags      = kwargs['tags']
-            self._content   = kwargs['content']
-            self._archive   = kwargs['archive']
-            self._abstrct   = kwargs['abstrct']
-
+            self.title     = kwargs['title']
+            self.abstrct   = kwargs['abstrct']
+            self.content   = kwargs['content']
+            self.tags      = kwargs['tags']
+            self.archive   = kwargs['archive']
+            self.path      = kwargs['path']
         except KeyError:
             raise Exception('Ouch! Properties not enough!!\n')
-    
+        if kwargs.get('date'):
+            date = kwargs.get('date').strip()
+            d = datetime.datetime(date,'%Y-%m-%d:%H')
+            self.timestamp = long(calendar.timegm(d.utctimetuple()))
+        else:
+            self.timestamp = long(os.path.getctime(self.path))
+            
     @property
-    def Title(self):
-        return self._title
-
-    @property
-    def TimeStamp(self):
-        return self._timestamp
-
-    @property
-    def Path(self):
-        return self._path
-
-    @property
-    def Tags(self):
-        return self._tags
-
-    @property
-    def Content(self):
-        return self._content
-
-    @property
-    def Archive(self):
-        return self._archive
-
-    @property
-    def Abstrct(self):
-        return self._abstrct
-
-    @property
-    ## Formated time
-    def Date(self):
-        date = datetime.datetime.fromtimestamp(self._timestamp)
+    def date(self):
+        date = datetime.datetime.fromtimestamp(self.timestamp)
         return date.strftime('%Y-%m-%d:%H')
 
     @property
-    def FeedDate(self):
-        date = datetime.datetime.fromtimestamp(self._timestamp)
+    def feed_data(self):
+        date = datetime.datetime.fromtimestamp(self.timestamp)
         d = date.strftime('%Y-%m-%dT%H:%M:%S')
         return d+'+00:00'
 
-    def setTimestamp(self,time):
-        self._timestamp = time
+    def __lt__(self,other):
+        return self.timestamp > other.timestamp
 
     def __unicode__(self):
-        return self._title
+        return self.title
 
     def __str__(self):
         return unicode(self).encode('utf-8')
