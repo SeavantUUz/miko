@@ -20,9 +20,10 @@ def save_nodes(func):
     '''A decorator for saving nodes'''
     def wrapper(*args,**kwargs):
         nodes = func(*args,**kwargs)
-        pick = open('data.pick','wb')
-        pick.dump(nodes)
-        pick.close()
+        if nodes
+            pick = open('data.pick','wb')
+            pick.dump(nodes)
+            pick.close()
         return nodes
     return wrapper
 
