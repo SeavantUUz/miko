@@ -2,17 +2,10 @@
 __all__ = ['Pagination']
 
 class Pagination(object):
-    def __init__(self,items,page,per_page):
-        self.items = items
-        self.page = page
+    def __init__(self,items,per_page):
+        self.total_items = items
+        self.page = 0
         self.per_page = per_page
-
-    def iter_pages(self,edge=4):
-        if self.page <= edge:
-            return range(1,min(self.pages,2 * edge + 1) + 1)
-        if self.page + edge > self.pages:
-            return range(max(self.pages - 2 * edge , 1),self.pages + 1)
-        return range(self.page - edge,min(self.pages,self.page + edge) + 1)
 
     @property
     def pages(self):
@@ -20,7 +13,7 @@ class Pagination(object):
     
     @property
     def total(self):
-        return len(self.items)
+        return len(self.total_items)
     
     @property
     def has_prev(self):
@@ -40,6 +33,7 @@ class Pagination(object):
 
     @property
     def items(self):
-        start = (self.page - 1) * self.per_page
+        self.page += 1
+        start = (self.page-1) * self.per_page
         end = self.page * self.per_page
-        return self.items[start:end]
+        return self.total_items[start:end]

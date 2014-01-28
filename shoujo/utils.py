@@ -1,18 +1,7 @@
 #coding:utf-8
-__all__ = ['sort_nodes','get_nodes','save_nodes','BleepRenderer']
+__all__ = ['sort_nodes','get_nodes','save_nodes']
 
 import pickle,codecs,re
-
-class BleepRenderer(HtmlRenderer,SmartyPants):
-    ''' code highlight '''
-    def block_code(self, text, lang):
-        if not lang:
-            return '\n<pre><code>%s</code></pre>\n' % \
-                h.escape_html(text.encode("utf8").strip())
-        lexer = get_lexer_by_name(lang, stripall=True)
-        formatter = HtmlFormatter()
-        return highlight(text, lexer, formatter)
-
 
 def sort_nodes(func):
     def wrapper(*args,**kwargs):

@@ -1,15 +1,24 @@
 from shoujo.utils import save_nodes,get_nodes,parse
 from shoujo.node import Node
 from shoujo.pagination import Pagination
-
-def pagination(nodes,page,per_page=7):
-    return  Pagination(nodes,page,per_page)
+from shoujo.jinja import env
 
 def _node(filename):
     elements = parse(filename)
     node = Node(**elements)
     return node
 
+def _render(node):
+
+    return node
+
+def render(func):
+    def wrapper(*args,**kwargs):
+        nodes = map(_render,func(*args,**kwargs))
+        return nodes
+    return wrapper
+
+@render
 @save_nodes
 @get_nodes
 @sort_nodes
@@ -22,6 +31,7 @@ def post(nodes,filename):
     return nodes
 
 
+@render
 @save_nodes
 @sort_nodes
 def postDir(dirname):
@@ -43,6 +53,7 @@ def show(nodes):
         for i,o in enumerate(nodes):
             print u'%5d:  %s' % (i,o)
 
+@render
 @save_nodes
 @get_nodes
 def remove(nodes,index):
