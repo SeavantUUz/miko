@@ -30,7 +30,9 @@ def markdown(data):
         extensions=m.EXT_FENCED_CODE | m.EXT_NO_INTRA_EMPHASIS)
         return md.render(data) 
 
-application = getconfig('app')
+configs = getconfig()
+application = config.get('app')
 env = Environment(loader=PackageLoader(application,'templates'))
-env.filters['datetime'] = xmldatetime
-env.filters['markdown'] = markdown
+filters = {'datetime':xmldatetime,'markdown':markdown}
+env.filters(filters)
+env.globals(configs)

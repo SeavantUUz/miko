@@ -2,11 +2,15 @@
 __all__ = ['Pagination']
 
 class Pagination(object):
-    def __init__(self,items,per_page):
+    def __init__(self,items,page=1,per_page=7):
         self.total_items = items
-        self.page = 0
+        self.page = page
         self.per_page = per_page
 
+    @property
+    def title(self):
+        return 'page_'+str(self.page)
+    
     @property
     def pages(self):
         return int((self.total - 1) / self.per_page)+1
@@ -33,7 +37,6 @@ class Pagination(object):
 
     @property
     def items(self):
-        self.page += 1
         start = (self.page-1) * self.per_page
         end = self.page * self.per_page
         return self.total_items[start:end]

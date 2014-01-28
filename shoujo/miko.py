@@ -1,20 +1,36 @@
-from shoujo.utils import save_nodes,get_nodes,parse
+from shoujo.utils import save_nodes,get_nodes,parse,getconfig
 from shoujo.node import Node
 from shoujo.pagination import Pagination
-from shoujo.jinja import env
+from shoujo.env import env
+import codecs
 
 def _node(filename):
     elements = parse(filename)
     node = Node(**elements)
     return node
 
-def _render(node):
-
+def _render(object,template):
+    template = env.get_template(template)
+    html = template.render(object)
+    configs = getconfig()
+    app = configs['app']
+    out = configs['out']
+    try:object.archive
+    except AttributeError:
+        filename = os.path.join(app,out,object.title+'.html')
+    else:filename = os.path.join(app,out,'posts',object.title+'.html')
+    with codecs.open(filename) as f:
+        f.write(html)
+        f.close()
     return node
 
 def render(func):
     def wrapper(*args,**kwargs):
-        nodes = map(_render,func(*args,**kwargs))
+        nodes = func(*args,**kwargs)
+        pages = Pagination(nodes).pages
+        paginations = map(lambda i:Pagination(nodes,i),range(pages))
+        map(lambda node:_render(node,'post.html'),nodes)
+        map(lambda page:_render(page,'page.html'),paginations)
         return nodes
     return wrapper
 
