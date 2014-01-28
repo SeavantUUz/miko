@@ -1,11 +1,12 @@
 #coding:utf-8
 from jinja2 import Environment,PackageLoader
-from utils import getConfig 
+from utils import getconfig
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 from misaka import HtmlRenderer,SmartyPants
 import misaka as m
+import datetime
 
 __all__ = ['env']
 
@@ -19,15 +20,17 @@ class BleepRenderer(HtmlRenderer,SmartyPants):
         formatter = HtmlFormatter()
         return highlight(text, lexer, formatter)
 
-def datetime(value):
-    pass
+def xmldatetime(value):
+    date = datetime.datetime.fromtimestamp(value)  
+    return date.strftime('%Y-%m-%d %H:%M')
 
 def markdown(data):
-   renderer = BleepRenderer()
+    renderer = BleepRenderer()
         md = m.Markdown(renderer,
         extensions=m.EXT_FENCED_CODE | m.EXT_NO_INTRA_EMPHASIS)
         return md.render(data) 
 
-application = getConfig('app')
+application = getconfig('app')
 env = Environment(loader=PackageLoader(application,'templates'))
-env.filters['datetime'] = datetime
+env.filters['datetime'] = xmldatetime
+env.filters['markdown'] = markdown

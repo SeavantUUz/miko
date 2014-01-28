@@ -1,7 +1,8 @@
 #coding:utf-8
-__all__ = ['sort_nodes','get_nodes','save_nodes']
+__all__ = ['sort_nodes','get_nodes','save_nodes','parse','getconfig']
 
 import pickle,codecs,re
+import yaml
 
 def sort_nodes(func):
     def wrapper(*args,**kwargs):
@@ -32,6 +33,13 @@ def save_nodes(func):
             pick.close()
         return nodes
     return wrapper
+
+def getconfig(attr='all'):
+    configs = yaml.load(open('../config.yaml','r'))
+    if args == 'all':
+        return configs
+    else:
+        return config.get(attr)
 
 def parse(filename):
     with codecs.open(filename,'r',encoding = 'utf-8') as f:
