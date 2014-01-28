@@ -1,5 +1,4 @@
-import codecs,os
-from shoujo.utils import save_nodes,get_nodes,parser
+from shoujo.utils import save_nodes,get_nodes,parse
 from shoujo.node import Node
 from shoujo.pagination import Pagination
 
@@ -7,7 +6,7 @@ def pagination(nodes,page,per_page=7):
     return  Pagination(nodes,page,per_page)
 
 def _node(filename):
-    elements = parser(codecs.open(filename,'r','utf-8'))
+    elements = parse(filename)
     node = Node(**elements)
     return node
 

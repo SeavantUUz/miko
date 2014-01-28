@@ -1,7 +1,18 @@
 #coding:utf-8
 __all__ = ['sort_nodes','get_nodes','save_nodes','BleepRenderer']
 
-import pickle
+import pickle,codecs,re
+
+class BleepRenderer(HtmlRenderer,SmartyPants):
+    ''' code highlight '''
+    def block_code(self, text, lang):
+        if not lang:
+            return '\n<pre><code>%s</code></pre>\n' % \
+                h.escape_html(text.encode("utf8").strip())
+        lexer = get_lexer_by_name(lang, stripall=True)
+        formatter = HtmlFormatter()
+        return highlight(text, lexer, formatter)
+
 
 def sort_nodes(func):
     def wrapper(*args,**kwargs):
@@ -33,12 +44,39 @@ def save_nodes(func):
         return nodes
     return wrapper
 
-class BleepRenderer(HtmlRenderer,SmartyPants):
-    ''' code highlight '''
-    def block_code(self, text, lang):
-        if not lang:
-            return '\n<pre><code>%s</code></pre>\n' % \
-                h.escape_html(text.encode("utf8").strip())
-        lexer = get_lexer_by_name(lang, stripall=True)
-        formatter = HtmlFormatter()
-        return highlight(text, lexer, formatter)
+def parse(filename):
+    with codecs.open(filename,'r',encoding = 'utf-8') as f:
+        lines = f.readlines()
+        elements = {}
+        patterns = [r'# (.+)\n',r'- archive:(.+)\n',r'- tags:(.+)\n',r'- date:(.+)\n']
+        parsers = map(re.compile,patterns)
+        atoms = [parser.match(line).group(1) for parser,line in zip(parsers,line[:4])]
+
+        elements['title'] = atoms[0]
+        elements['archive'] = atoms[1]
+        elements['tags'] = atoms[2].strip().replace(u'，',',').split(',')
+        elements['date'] = atoms[3]
+
+        saps = filter(lambda i:lines[i]=='\n',range(len(lines)))
+        # first sap saparate infos by abstrct
+        # second sap saparate abstrct by content
+        # we dont need blank line,so jump one line
+        abstrct = lines[saps[0]+1:saps[1]]
+        content = lines[saps[1]+1:]
+        elements['abstrct'] = '\n'.join(abstrct)
+
+        codeIndex = filter(lambda i:content[i][:3] == '```',range(len(content)))
+        codeIndex.insert(0,0)
+        codeIndex.append(len(content))
+        contentParts = []
+        for i in range(len(codeIndex)-1):
+            currentIndex = codeIndex[i]
+            nextIndex = codeIndex[i+1]
+            if i % 2:
+                contentPart = ''.join(content[currentIndex:nextIndex])
+            else:
+                contentPart = '\n'.join(content[currentIndex:nextIndex])
+            contentParts.append(contentPart)
+        elements['content'] = '\n'.join(contentParts)
+        return elements
+
