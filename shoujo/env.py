@@ -1,5 +1,5 @@
 #coding:utf-8
-from jinja2 import Environment,PackageLoader
+from jinja2 import Environment,FileSystemLoader
 from utils import getconfig
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
@@ -33,7 +33,7 @@ def markdown(data):
 configs = getconfig()
 app = configs.get('app')
 theme = configs.get('theme')
-env = Environment(loader=PackageLoader(os.path.join(app,'themes',theme),'templates'))
-filters = {'datetime':xmldatetime,'markdown':markdown}
-env.filters(filters)
-env.globals(configs)
+env = Environment(loader=FileSystemLoader(os.path.join(app,'themes',theme,'templates')))
+dfilter = {'xmldatetime':xmldatetime,'markdown':markdown}
+env.filters = dfilter
+env.globals = configs

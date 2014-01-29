@@ -20,10 +20,10 @@ def _render(item,template):
     except AttributeError:
         filename = os.path.join(app,out,item.title+'.html')
     else:filename = os.path.join(app,out,'posts',item.title+'.html')
-    with codecs.open(filename) as f:
+    with codecs.open(filename,'w','utf-8') as f:
         f.write(html)
         f.close()
-    return node
+    return item
 
 def render(func):
     def wrapper(*args,**kwargs):

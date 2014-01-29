@@ -8,23 +8,27 @@ class Node(object):
             self.title     = kwargs['title']
             self.abstrct   = kwargs['abstrct']
             self.content   = kwargs['content']
-            self.tags      = kwargs['tags']
+            self._tags      = kwargs['tags']
             self.archive   = kwargs['archive']
             self.date      = kwargs['date']
             self.path      = kwargs['path']
         except KeyError:
             raise Exception('Ouch! Properties not enough!!\n')
         self.timestamp = min(self.utctimestamp(self.date),\
-                         self.ctime(self.path,self.title))
-            
+                         self.ctime(self.path))
+
+    @property
+    def tags(self):
+        taglist = self._tags.replace('，',',').splite(',')
+        return [tag.strip() for tag in taglist] 
+
     def utctimestamp(self,value):
         date = value.strip()
         d = datetime.strptime(date,'%Y-%m-%d:%H')
         return calendar.timegm(d.utctimetuple())
 
-    def ctime(self,path,title):
-        filename = os.path.join(path,title)
-        return os.path.getctime(filename)
+    def ctime(self,path):
+        return os.path.getctime(path)
 
     @property
     def feed_date(self):

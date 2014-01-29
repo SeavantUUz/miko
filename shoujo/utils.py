@@ -30,7 +30,7 @@ def save_nodes(func):
         nodes = func(*args,**kwargs)
         if nodes:
             pick = open('data.pick','wb')
-            pick.dump(nodes)
+            pickle.dump(nodes,pick)
             pick.close()
         return nodes
     return wrapper
@@ -54,7 +54,7 @@ def parse(filename):
         elements['archive'] = atoms[1]
         elements['tags'] = atoms[2].strip().replace(u'，',',').split(',')
         elements['date'] = atoms[3]
-        elements['path'] = os.path.dirname(filename)
+        elements['path'] = filename
 
         saps = filter(lambda i:lines[i]=='\n',range(len(lines)))
         # first sap saparate infos by abstrct
