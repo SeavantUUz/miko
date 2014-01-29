@@ -9,16 +9,16 @@ def _node(filename):
     node = Node(**elements)
     return node
 
-def _render(object,template):
+def _render(item,template):
     template = env.get_template(template)
-    html = template.render(object)
+    html = template.render(item=item)
     configs = getconfig()
     app = configs['app']
     out = configs['out']
-    try:object.archive
+    try:item.archive
     except AttributeError:
-        filename = os.path.join(app,out,object.title+'.html')
-    else:filename = os.path.join(app,out,'posts',object.title+'.html')
+        filename = os.path.join(app,out,item.title+'.html')
+    else:filename = os.path.join(app,out,'posts',item.title+'.html')
     with codecs.open(filename) as f:
         f.write(html)
         f.close()
@@ -90,5 +90,9 @@ def remove(nodes,index):
                 return nodes
             else:
                 return None
+
+def init():
+    configs = getconfig()
+    
 
 

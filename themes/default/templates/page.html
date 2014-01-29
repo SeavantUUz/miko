@@ -1,29 +1,44 @@
 {% extends "layout.html" %}
 
 {% block afterstyle %}
-{% if site.description %}<meta name="description" content="{{site.description }}" />{% endif %}
+{% if site.description %}<meta name="description" content="{{description }}" />{% endif %}
 {% endblock %}
 
 {% block main %}
-{% for post in posts %}
+{% for post in item.items %}
 <div class="hentry">
     <h2 class="entry-title">
-    	<a href="../{{post.Path}}">{{post.Title}}</a>
+    	<a href="./posts/{{post}}.html">{{post}}</a>
     </h2>
     <div class="entry-meta">
-        <time class="updated" datetime="{{post.Date}}">
-            {{post.Date}}
+        <time class="updated" datetime="{{post.date|xmldatetime}}">
+            {{post.date|xmldatetime}}
         </time>
         <span class="author vcard">
-            by <a href="https://plus.google.com/113819291149083106836?rel=author">{{site.author}}</a>
+            by <a href="https://plus.google.com/113819291149083106836?rel=author">{{author}}</a>
         </span>
     </div>
     <div class="entry-content">
-        {{post.Abstrct}}
+        {{post.abstrct|markdown}}
     </div>
 </div>
 {%- endfor %}
  
+{% endblock %}
+
+{% block footer%}
+    {% if item.has_prev %}
+        <ul style="list-style:none;padding:0;margin:0">
+            <li style="float:left"><a href="/www/{{item.prev_title}}.html">&laquo; 古い記事</a></li>
+            <div style="clear:both"></div>
+        </ul>
+    {% endif %}
+    {% if item.has_next %}
+        <ul style="list-style:none;padding:0;margin:0">
+            <li style="float:right"><a href="/www/{{item.next_title}}.html">新しい記事 &raquo;</a></li>
+            <div style="clear:both"></div>
+        </ul>
+    {% endif %}
 {% endblock %}
 
 

@@ -24,12 +24,20 @@ class Pagination(object):
         return self.page > 1
 
     @property
+    def prev_title(self):
+        return 'page_'+str(self.page-1)
+
+    @property
     def prev_num(self):
         return self.page - 1
 
     @property
     def has_next(self):
         return self.page < self.pages
+
+    @property
+    def next_title(self):
+        return 'page_'+str(self.page+1)
 
     @property
     def next_num(self):

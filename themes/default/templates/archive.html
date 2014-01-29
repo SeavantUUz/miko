@@ -4,11 +4,11 @@
 
 {% block main %}
 <ul class="entry-list">
-    {% for key in Archive %}
+    {% for key in items %}
         <b>{{ key }}:</b>
-        {% for node in Archive[key] %}
+        {% for item in Archive[key] %}
         <li class="entry-item">
-            <a href="../{{ node.Path }}">{{ node.Title }}</a>
+            <a href="/{{out}}/{{item}}">{{item}}</a>
         </li>
         {% endfor %}
     {% endfor %}

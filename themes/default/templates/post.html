@@ -1,37 +1,37 @@
 {% extends "layout.html" %}
 
-{% block title %}{{post.Title}} - {{site.name}}{% endblock %}
+{% block title %}{{item.title}} - {{name}}{% endblock %}
 {% block afterstyle %}
-<link rel="canonical" href="{{post}}" />
+<link rel="canonical" href="{{item}}.html" />
 {% endblock %}
 
 {% block main %}
 
 
 <div class="hentry">
-    <h2 class="entry-title">{{post.Title}}</h2>
+    <h2 class="entry-title">{{item.title}}</h2>
     <div class="entry-meta">
-        <time class="updated" datetime="{{post.Date}}">
-            {{post.Date}}
+        <time class="updated" datetime="{{item.timestamp|xmldatetime}}">
+            {{item.timestamp|xmldatetime}}
         </time>
         <span class="author vcard">
-            by <a href="https://plus.google.com/113819291149083106836?rel=author">{{site.author}}</a>
+            by <a href="https://plus.google.com/113819291149083106836?rel=author">{{author}}</a>
         </span>
     </div>
 
     <div class="entry-content">
-        {{post.Content}}
+        {{item.content|makedown}}
     </div>
 
     <div class="entry-tags">
-        {% for tag in post.Tags %}
-        <a href="../tags.html#{{tag}}">{{tag}}<a>
+        {% for tag in post.tags %}
+        <a href="/{{out}}/tags.html#{{tag}}">{{tag}}<a>
         {%- endfor %}
     </div>
 
 
 <!-- Duoshuo Comment BEGIN -->
-<div class="ds-thread" data-thread-key="{{post.Title}}" data-title="{{post.Title}}" data-url="http://blog.kochiya.me/www/posts/{{post.Title}}.html" data-author-key="AprocySanae"></div>
+<div class="ds-thread" data-thread-key="{{item.title}}" data-title="{{item.title}}" data-url="http://blog.kochiya.me/{{out}}/posts/{{item.title}}.html" data-author-key="AprocySanae"></div>
 <script type="text/javascript">
 var duoshuoQuery = {short_name:"aprocysanae"};
         (function() {

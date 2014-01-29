@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}{{site.name}}{% endblock %}</title>
+        <title>{% block title %}{{name}}{% endblock %}</title>
         <script>if (top !== self) top.location = self.location;</script>
         <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -15,8 +15,8 @@
 
 </script>
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-        <link rel="stylesheet" href="/{{site.themePath}}/static/style.css" />
-        <link rel="stylesheet" href="/{{site.themePath}}/static/pygments.css" />
+        <link rel="stylesheet" href="/themes/{{theme}}/static/style.css" />
+        <link rel="stylesheet" href="/themes/{{theme}}/static/pygments.css" />
         <!--[if lt IE 9]>
         <script type="text/javascript" src="../static/html5shiv.js"></script>
         <![endif]-->
@@ -25,7 +25,7 @@
     <body>
         <header id="header">
             {% block header %}
-            <h1 id="brand"><a href="/">{{site.name}}</a></h1>
+            <h1 id="brand"><a href="/">{{name}}</a></h1>
             {% endblock %}
 
         <nav id="nav" role="navigation">
@@ -48,44 +48,22 @@
         <footer id="footer">
 
             {% block footer %}
-            <hr class="end" />
+            {% endblock %}
 
-            {% if before_page and next_page == False %}
-            <ul style="list-style:none;padding:0;margin:0">
-            <li style="float:left"><a href="/www/page_{{pagen-1}}.html">&laquo; 新しい記事</a></li>
-            <div style="clear:both"></div>
-            </ul>
-            {% endif %}
-
-            {% if before_page == False and next_page %}
-            <ul style="list-style:none;padding:0;margin:0">
-            <li style="float:left"><a href="/www/page_{{pagen+1}}.html">&laquo; 古い記事</a></li>
-            <div style="clear:both"></div>
-            </ul>
-            {% endif %}
-
-            {% if before_page and next_page %}
-            <ul style="list-style:none;padding:0;margin:0">
-            <li style="float:left"><a href="/www/page_{{pagen+1}}.html">&laquo; 古い記事</a></li>
-            <li style="float:right"><a href="/www/page_{{pagen-1}}.html">&laquo; 新しい記事</a></li>
-            <div style="clear:both"></div>
-            </ul>
-            {% endif %}
-
+            
             <p class="copyright">
             <span class="software">
-                Powered by <a href="{{site.homepage}}">{{site.author}}</a> {{site.version}},
+                Powered by <a href="{{home}}">{{author}}</a> {{version}},
             </span>
             <span class="theme">
-                Theme by <a href="{{site.homepage}}">AprocySanae</a> revised from <a href="https://github.com/lepture/liquidluck">liquidluck</a>
+                Theme by <a href="{{home}}">AprocySanae</a> revised from <a href="https://github.com/lepture/liquidluck">liquidluck</a>
             </span>
             </p>
-            {% endblock %}
+ 
         </footer>
 
-
         {% block beforejs %}{% endblock %}
-        <script type="text/javascript" src="/{{site.themePath}}/static/mobile.js"></script>
+        <script type="text/javascript" src="/themes/{{theme}}/static/mobile.js"></script>
         {% block afterjs %}{% endblock %}
     </body>
 </html>
