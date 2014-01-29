@@ -1,8 +1,9 @@
 #coding:utf-8
 __all__ = ['sort_nodes','get_nodes','save_nodes','parse','getconfig']
 
-import pickle,codecs,re
+import pickle,codecs,re,os
 import yaml
+from shoujo.node import Node
 
 def sort_nodes(func):
     def wrapper(*args,**kwargs):
@@ -35,8 +36,8 @@ def save_nodes(func):
     return wrapper
 
 def getconfig(attr='all'):
-    configs = yaml.load(open('../config.yaml','r'))
-    if args == 'all':
+    configs = yaml.load(open('config.yaml','r'))
+    if attr == 'all':
         return configs
     else:
         return config.get(attr)
@@ -47,12 +48,13 @@ def parse(filename):
         elements = {}
         patterns = [r'# (.+)\n',r'- archive:(.+)\n',r'- tags:(.+)\n',r'- date:(.+)\n']
         parsers = map(re.compile,patterns)
-        atoms = [parser.match(line).group(1) for parser,line in zip(parsers,line[:4])]
+        atoms = [parser.match(line).group(1) for parser,line in zip(parsers,lines[:4])]
 
         elements['title'] = atoms[0]
         elements['archive'] = atoms[1]
         elements['tags'] = atoms[2].strip().replace(u'，',',').split(',')
         elements['date'] = atoms[3]
+        elements['path'] = os.path.dirname(filename)
 
         saps = filter(lambda i:lines[i]=='\n',range(len(lines)))
         # first sap saparate infos by abstrct

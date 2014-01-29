@@ -6,7 +6,7 @@ from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 from misaka import HtmlRenderer,SmartyPants
 import misaka as m
-import datetime
+import datetime,os
 
 __all__ = ['env']
 
@@ -26,13 +26,14 @@ def xmldatetime(value):
 
 def markdown(data):
     renderer = BleepRenderer()
-        md = m.Markdown(renderer,
-        extensions=m.EXT_FENCED_CODE | m.EXT_NO_INTRA_EMPHASIS)
-        return md.render(data) 
+    md = m.Markdown(renderer,
+         extensions=m.EXT_FENCED_CODE | m.EXT_NO_INTRA_EMPHASIS)
+    return md.render(data) 
 
 configs = getconfig()
-application = config.get('app')
-env = Environment(loader=PackageLoader(application,'templates'))
+app = configs.get('app')
+theme = configs.get('theme')
+env = Environment(loader=PackageLoader(os.path.join(app,'themes',theme),'templates'))
 filters = {'datetime':xmldatetime,'markdown':markdown}
 env.filters(filters)
 env.globals(configs)

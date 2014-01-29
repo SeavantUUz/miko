@@ -1,8 +1,8 @@
-from shoujo.utils import save_nodes,get_nodes,parse,getconfig
+#coding:utf-8
+from shoujo.utils import save_nodes,get_nodes,sort_nodes,parse,getconfig
 from shoujo.node import Node
 from shoujo.pagination import Pagination
-from shoujo.env import env
-import codecs
+import codecs,shutil,os
 
 def _node(filename):
     elements = parse(filename)
@@ -10,6 +10,7 @@ def _node(filename):
     return node
 
 def _render(item,template):
+    from shoujo.env import env
     template = env.get_template(template)
     html = template.render(item=item)
     configs = getconfig()
@@ -91,8 +92,20 @@ def remove(nodes,index):
             else:
                 return None
 
+@save_nodes
 def init():
     configs = getconfig()
-    
-
-
+    app = configs['app']
+    out = configs['out']
+    theme = configs['theme']
+    try:os.mkdir(app)
+    except OSError:
+        print u'\n检测到已存在的目录树，删掉它么?(yes/no)'
+        choose = raw_input()
+        if choose == 'yes':
+            shutil.rmtree(app)
+            os.mkdir(app)
+            shutil.copytree('themes',os.path.join(app,'themes'))
+            os.mkdir(os.path.join(app,out))
+            os.mkdir(os.path.join(app,out,'posts'))
+            print u'目录结构已建立'

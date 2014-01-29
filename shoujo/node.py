@@ -1,5 +1,6 @@
 #coding:utf-8
-import os,calendar,datetime
+import os,calendar
+from datetime import datetime
 
 class Node(object):
     def __init__(self,**kwargs):
@@ -17,8 +18,8 @@ class Node(object):
                          self.ctime(self.path,self.title))
             
     def utctimestamp(self,value):
-        date = self.date.strip()
-        d = datetime.datetime(date,'%Y-%m-%d:%H')
+        date = value.strip()
+        d = datetime.strptime(date,'%Y-%m-%d:%H')
         return calendar.timegm(d.utctimetuple())
 
     def ctime(self,path,title):
