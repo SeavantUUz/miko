@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 
-{% block title %}{{ ArchiveTitle }}{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block main %}
 <ul class="entry-list">
-    {% for key in items %}
+    {% for key in archives %}
         <b>{{ key }}:</b>
-        {% for item in Archive[key] %}
+        {% for item in archives[key] %}
         <li class="entry-item">
-            <a href="/{{out}}/{{item}}">{{item}}</a>
+            <a href="/{{out}}/posts/{{item}}.html">{{item}}</a>
         </li>
         {% endfor %}
     {% endfor %}

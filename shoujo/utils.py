@@ -1,9 +1,30 @@
 #coding:utf-8
-__all__ = ['sort_nodes','get_nodes','save_nodes','parse','getconfig','update_themes']
+__all__ = ['sort_nodes','get_nodes','save_nodes','parse','getconfig','update_themes','_nodesdic','_tagsdic','_dontcare']
 
 import pickle,codecs,re,os,shutil
 import yaml
 from shoujo.node import Node
+
+def _nodesdic(nodes):
+    dic = {}
+    for node in nodes:
+        dic.setdefault(node.archive,[]).append(node)
+    return dic
+
+def _tagsdic(nodes):
+    dic = {}
+    for node in nodes:
+        for tag in node.tags:
+            dic.setdefault(tag,[]).append(node)
+    return dic
+
+def _dontcare(nodes,filename,todict):
+    from shoujo.env import env
+    configs = getconfig()
+    path = os.path.join(configs['app'],configs['out'],filename+'.html')
+    template = env.get_template(filename+'.html')
+    items = todict(nodes)
+    return configs,template,items,path
 
 def sort_nodes(func):
     def wrapper(*args,**kwargs):

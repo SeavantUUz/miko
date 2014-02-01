@@ -1,5 +1,5 @@
 #coding:utf-8
-from shoujo.utils import save_nodes,get_nodes,sort_nodes,parse,getconfig,update_themes
+from shoujo.utils import save_nodes,get_nodes,sort_nodes,parse,getconfig,update_themes,_nodesdic,_tagsdic,_dontcare
 from shoujo.node import Node
 from shoujo.pagination import Pagination
 import codecs,shutil,os
@@ -24,6 +24,26 @@ def _render(item,template):
         f.write(html)
         f.close()
     return item
+
+def tags(func):
+    def wrapper(*args,**kwargs):
+        nodes = func(*args,**kwargs)
+        configs,template,tags,path = _dontcare(nodes,'tags',_tagsdic)
+        html = template.render(title = configs['tags_title'],tags = tags)
+        with codecs.open(path,'w','utf-8') as f:
+            f.write(html)
+        return nodes
+    return wrapper
+
+def archive(func):
+    def wrapper(*args,**kwargs):
+        nodes = func(*args,**kwargs)
+        configs,template,archives,path = _dontcare(nodes,'archive',_nodesdic)
+        html = template.render(title = configs['archive_title'],archives=archives)
+        with codecs.open(path,'w','utf-8') as f:
+            f.write(html)
+        return nodes
+    return wrapper
 
 def _content(filename):
     from shoujo.env import env
@@ -60,6 +80,8 @@ def render(func):
     return wrapper
 
 @render
+@tags
+@archive
 @save_nodes
 @get_nodes
 @sort_nodes
@@ -74,6 +96,8 @@ def post(nodes,filename):
 
 @update_themes
 @render
+@tags
+@archive
 @save_nodes
 @sort_nodes
 def postDir(dirname):

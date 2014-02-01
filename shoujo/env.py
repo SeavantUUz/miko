@@ -30,10 +30,13 @@ def markdown(data):
          extensions=m.EXT_FENCED_CODE | m.EXT_NO_INTRA_EMPHASIS)
     return md.render(data) 
 
+def length(data):
+    return len(data)
+
 configs = getconfig()
 app = configs.get('app')
 theme = configs.get('theme')
 env = Environment(loader=FileSystemLoader(os.path.join(app,'themes',theme,'templates')))
-dfilter = {'xmldatetime':xmldatetime,'markdown':markdown}
+dfilter = {'xmldatetime':xmldatetime,'markdown':markdown,'length':length}
 env.filters = dfilter
 env.globals = configs
