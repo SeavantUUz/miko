@@ -1,5 +1,5 @@
 #coding:utf-8
-from shoujo.utils import save_nodes,get_nodes,sort_nodes,parse,getconfig
+from shoujo.utils import save_nodes,get_nodes,sort_nodes,parse,getconfig,update_themes
 from shoujo.node import Node
 from shoujo.pagination import Pagination
 import codecs,shutil,os
@@ -24,6 +24,20 @@ def _render(item,template):
         f.write(html)
         f.close()
     return item
+
+def _content(filename):
+    from shoujo.env import env
+    configs = getconfig()
+    htmlfile = filename + '.html'
+    mdfile = filename + '.md'
+    path = os.path.join(configs['app'],configs['out'],htmlfile)
+    template = env.get_template(htmlfile)
+    with codecs.open(mdfile,'r','utf-8') as fcontent:
+        content = '\n'.join([line.replace('\n','  \n') for line in fcontent])
+    html = template.render(content=content)
+    f = codecs.open(path,'w','utf-8')
+    f.write(html)
+    print '\n{0} page 生成结束'.format(filename)
 
 def render(func):
     def wrapper(*args,**kwargs):
@@ -58,6 +72,7 @@ def post(nodes,filename):
     return nodes
 
 
+@update_themes
 @render
 @save_nodes
 @sort_nodes
@@ -106,6 +121,8 @@ def init():
     app = configs['app']
     out = configs['out']
     theme = configs['theme']
+    try: os.remove('data.pick')
+    except OSError:pass
     try:os.mkdir(app)
     except OSError:
         print u'\n检测到已存在的目录树，删掉它么?(yes/no)'
@@ -117,3 +134,18 @@ def init():
             os.mkdir(os.path.join(app,out))
             os.mkdir(os.path.join(app,out,'posts'))
             print u'目录结构已建立'
+
+@update_themes
+def themes():
+    '''update themes.In fact,decorater handle all things'''
+    return None
+
+
+def links():
+    '''generate links.html'''
+    return _content('links')
+
+def aboutme():
+    '''generate about_me.html'''
+    return _content('about_me')
+

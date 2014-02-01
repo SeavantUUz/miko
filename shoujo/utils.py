@@ -1,7 +1,7 @@
 #coding:utf-8
-__all__ = ['sort_nodes','get_nodes','save_nodes','parse','getconfig']
+__all__ = ['sort_nodes','get_nodes','save_nodes','parse','getconfig','update_themes']
 
-import pickle,codecs,re,os
+import pickle,codecs,re,os,shutil
 import yaml
 from shoujo.node import Node
 
@@ -47,6 +47,16 @@ def getconfig(attr='all'):
     else:
         return config.get(attr)
 
+def update_themes(func):
+    def wrapper(*args,**kwargs):
+        ret = func(*args,**kwargs)
+        configs = getconfig()
+        themesdir = os.path.join(configs['app'],'themes')
+        shutil.rmtree(themesdir)
+        shutil.copytree('themes',themesdir)
+        return ret
+    return wrapper
+
 def parse(filename):
     with codecs.open(filename,'r',encoding = 'utf-8') as f:
         lines = f.readlines()
@@ -57,7 +67,7 @@ def parse(filename):
 
         elements['title'] = atoms[0]
         elements['archive'] = atoms[1]
-        elements['tags'] = atoms[2].strip().replace(u'，',',').split(',')
+        elements['tags'] = atoms[2]
         elements['date'] = atoms[3]
         elements['path'] = filename
 

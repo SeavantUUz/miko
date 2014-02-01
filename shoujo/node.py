@@ -8,7 +8,7 @@ class Node(object):
             self.title     = kwargs['title']
             self.abstrct   = kwargs['abstrct']
             self.content   = kwargs['content']
-            self._tags      = kwargs['tags']
+            self._tags     = kwargs['tags']
             self.archive   = kwargs['archive']
             self.date      = kwargs['date']
             self.path      = kwargs['path']
@@ -19,7 +19,7 @@ class Node(object):
 
     @property
     def tags(self):
-        taglist = self._tags.replace('，',',').splite(',')
+        taglist = self._tags.replace(u'，',',').split(',')
         return [tag.strip() for tag in taglist] 
 
     def utctimestamp(self,value):
