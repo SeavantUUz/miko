@@ -32,6 +32,11 @@ def save_nodes(func):
             pick = open('data.pick','wb')
             pickle.dump(nodes,pick)
             pick.close()
+        else:
+            try:
+                os.remove('data.pick')
+            except OSError:
+                pass
         return nodes
     return wrapper
 

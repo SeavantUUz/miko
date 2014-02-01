@@ -8,7 +8,7 @@ def _parserInput():
     parser = argparse.ArgumentParser(description = 'A static blog generator')
     parser.add_argument("--init",action = "store_true",help='init dirs struct')
     parser.add_argument("--show",action = "store_true",help='Show all posts you post')
-    parser.add_argument("--remove",type=int,help="Remove a node.eg: ./shoujo.py --remove 3")
+    parser.add_argument("--remove",help="Remove a node.eg: ./shoujo.py --remove 3")
     parser.add_argument("--post",help="Submit your post.eg: --post filename")
     parser.add_argument("--postDir",help='Submit a dir and all files in the dir will be post.')
 ##    parser.add_argument("--updateThemes",action = "store_true",dest="updateThemes",help='Update all of your themes.Each time you add a new theme and you should run it')
@@ -26,7 +26,7 @@ def main():
     options = _parserInput()
     if options.init:init()
     elif options.post:post(options.post)
-    elif options.remove: remove(options.remove)
+    elif options.remove: remove(int(options.remove))
     elif options.show:show()
     elif options.postDir:postDir(options.postDir)
     else:print u'无效参数'

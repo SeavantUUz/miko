@@ -27,12 +27,22 @@ def _render(item,template):
 
 def render(func):
     def wrapper(*args,**kwargs):
+        ## delete old rendered pages and html files
+        configs = getconfig()
+        dirname = os.path.join(configs['app'],configs['out'])
+        for root,dirs,files in os.walk(dirname):
+            for name in files:
+                os.remove(os.path.join(root,name))
+        # rerender
         nodes = func(*args,**kwargs)
+        if not nodes:
+            return None
         pages = Pagination(nodes).pages
-        paginations = map(lambda i:Pagination(nodes,i),range(pages))
+        paginations = map(lambda i:Pagination(nodes,i+1),range(pages))
         map(lambda node:_render(node,'post.html'),nodes)
         map(lambda page:_render(page,'page.html'),paginations)
         return nodes
+            
     return wrapper
 
 @render
@@ -63,12 +73,13 @@ def postDir(dirname):
 
 @get_nodes
 def show(nodes):
+    print '\n-----------------------------\n'
     if not nodes:
-        print u'这里空空如也，什么都没有\n'
+        print u'这里空空如也，什么都没有'
     else:
-        print '\n-----------------------------'
         for i,o in enumerate(nodes):
             print u'%5d:  %s' % (i,o)
+    print '\n-----------------------------\n'
 
 @render
 @save_nodes
@@ -81,16 +92,13 @@ def remove(nodes,index):
             node = nodes[index]
         except IndexError:
             print u'您所要求的索引溢界'
-            return None
+            return nodes
         else:
             print u'\n真的希望删除 {0}: {1} ? (yes/no)'.format(index,nodes[index])
             choose = raw_input()
             if choose == 'yes':
-                _removePost(node)
                 nodes.remove(node)
-                return nodes
-            else:
-                return None
+            return nodes
 
 @save_nodes
 def init():
