@@ -1,5 +1,8 @@
-jinja2==2.6
+Jinja2==2.7.2
+MarkupSafe==0.18
+PyYAML==3.10
+Pygments==1.6
+houdini==0.0.1
+houdini.py==0.1.0
 misaka==1.0.2
-pyyaml
-pygments
-houdini.py
+wsgiref==0.1.2
