@@ -25,6 +25,13 @@ def xmldatetime(value):
     date = datetime.datetime.fromtimestamp(value)  
     return date.strftime('%Y-%m-%d %H:%M')
 
+def lastupdatetime(nodes):
+    try:
+        ret = xmldatetime(nodes[0].timestamp)
+    except IndexError:
+        ret = xmldatetime(0)
+    return ret
+
 def markdown(data):
     renderer = BleepRenderer()
     md = m.Markdown(renderer,
@@ -38,6 +45,6 @@ configs = getconfig()
 app = configs.get('app')
 theme = configs.get('theme')
 env = Environment(loader=FileSystemLoader(os.path.join(app,'themes',theme,'templates')))
-dfilter = {'xmldatetime':xmldatetime,'markdown':markdown,'length':length}
+dfilter = {'xmldatetime':xmldatetime,'markdown':markdown,'length':length,'lastupdatetime':lastupdatetime}
 env.filters = dfilter
 env.globals = configs

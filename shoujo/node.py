@@ -11,6 +11,7 @@ class Node(object):
             self._tags     = kwargs['tags']
             self.archive   = kwargs['archive']
             self.date      = kwargs['date']
+            self.url       = kwargs['url']
             self.path      = kwargs['path']
         except KeyError:
             raise Exception('Ouch! Properties not enough!!\n')

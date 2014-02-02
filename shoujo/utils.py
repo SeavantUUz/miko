@@ -90,6 +90,8 @@ def parse(filename):
         elements['archive'] = atoms[1]
         elements['tags'] = atoms[2]
         elements['date'] = atoms[3]
+        configs = getconfig()
+        elements['url'] = os.path.join(configs['out'],'posts',atoms[0]+'.html')
         elements['path'] = filename
 
         saps = filter(lambda i:lines[i]=='\n',range(len(lines)))

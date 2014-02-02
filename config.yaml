@@ -8,7 +8,7 @@ tags_title:      Sanaeのタグ
 author:          AprocySanae
 email:           sanae@kochiya.me
 home:            http://blog.kochiya.me
-#FEEDURL:         feed.xml
+feed:         feed.xml
 #DISQUS_SHORT_NAME: sanae
 version:         0.1
 description:     这里是风笳，这个庭园的主人，众所周知的早苗控一枚。这个博客会时不时发布一些我自己的研究成果或者碎碎念。如果您喜欢技术、鬼扯、早苗和早苗的话，我会很乐意加你为好友。同时由于抖M体质，所以我也很乐意接受您的批评。敬请不吝赐教。

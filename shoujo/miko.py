@@ -45,6 +45,33 @@ def archive(func):
         return nodes
     return wrapper
 
+def sitemap(func):
+    def wrapper(*args,**kwargs):
+        nodes = func(*args,**kwargs)
+        configs = getconfig()
+        app = configs.get('app')
+        home = configs.get('home')
+        out = configs.get('out')
+        with codecs.open(os.path.join(app,'sitemap.txt'),'w','utf-8') as sitemap:
+            for node in nodes:
+                url = home+'/'+node.url
+                sitemap.write(url+'\n')
+        return nodes
+    return wrapper
+
+def feed(func):
+    def wrapper(*args,**kwargs):
+        from shoujo.env import env
+        nodes = func(*args,**kwargs)
+        configs = getconfig()
+        template = env.get_template('feed.xml')
+        html = template.render(nodes=nodes)
+        f = codecs.open(os.path.join(configs['app'],'feed.xml'),'w','utf-8')
+        f.write(html)
+        f.close()
+        return nodes
+    return wrapper
+
 def _content(filename):
     from shoujo.env import env
     configs = getconfig()
@@ -66,7 +93,11 @@ def render(func):
         dirname = os.path.join(configs['app'],configs['out'])
         for root,dirs,files in os.walk(dirname):
             for name in files:
-                os.remove(os.path.join(root,name))
+                if  name == 'links.html' or \
+                    name == 'about_me.html' or \
+                    name == 'robots.txt':
+                    continue 
+                else: os.remove(os.path.join(root,name))
         # rerender
         nodes = func(*args,**kwargs)
         if not nodes:
@@ -79,9 +110,11 @@ def render(func):
             
     return wrapper
 
-@render
+@feed
+@sitemap
 @tags
 @archive
+@render
 @save_nodes
 @get_nodes
 @sort_nodes
@@ -94,12 +127,14 @@ def post(nodes,filename):
     return nodes
 
 
-@update_themes
-@render
+@feed
+@sitemap
 @tags
 @archive
+@render
 @save_nodes
 @sort_nodes
+@update_themes
 def postDir(dirname):
     '''post dirs,which would try all files in dirs
        and post them'''
@@ -120,6 +155,8 @@ def show(nodes):
             print u'%5d:  %s' % (i,o)
     print '\n-----------------------------\n'
 
+@feed
+@sitemap
 @render
 @save_nodes
 @get_nodes
@@ -164,8 +201,7 @@ def themes():
     '''update themes.In fact,decorater handle all things'''
     return None
 
-
-def links():
+def links(func):
     '''generate links.html'''
     return _content('links')
 
@@ -182,4 +218,3 @@ def preview():
     httpd = SocketServer.TCPServer(('localhost',PORT),Handler)
     print u'运行服务器在http://localhost:8000'
     httpd.serve_forever()
-
