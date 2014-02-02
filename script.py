@@ -3,7 +3,7 @@ import codecs,os
 import datetime
 
 def convert(filename,dirname):
-    f = codecs.open(filename,mod = 'r',encoding='utf-8')
+    f = codecs.open(filename,mode = 'r',encoding='utf-8')
     elements = []
     rest = None
     lines = f.readlines()
