@@ -2,7 +2,7 @@
 # coding:utf-8
 
 import argparse
-from shoujo.miko import post,postDir,remove,show,init,themes,aboutme,links#updateThemes,insert,archive,tags,aboutMe,links,feed
+from shoujo.miko import post,postDir,remove,show,init,themes,aboutme,links,preview#updateThemes,insert,archive,tags,aboutMe,links,feed
 
 def _parserInput():
     parser = argparse.ArgumentParser(description = 'A static blog generator')
@@ -15,7 +15,8 @@ def _parserInput():
 ##    parser.add_argument("--archive",action="store_true",dest="archive")
 ##    parser.add_argument("--tags",action="store_true",dest="tags")
     parser.add_argument("--aboutme",action="store_true",dest="aboutMe")
-    parser.add_argument("--links",action="store_true",dest="links")
+    parser.add_argument("--links",action="store_true")
+    parser.add_argument("--preview",action = "store_true")
 ##    parser.add_argument("--feed",action="store_true",dest="feed")
 ##
     args = parser.parse_args()
@@ -32,6 +33,7 @@ def main():
     elif options.themes:themes()
     elif options.aboutMe:aboutme()
     elif options.links:links()
+    elif options.preview:preview()
     else:print u'无效参数'
     # elif options.archive:
     #     archive()

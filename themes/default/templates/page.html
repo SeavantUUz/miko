@@ -27,18 +27,17 @@
 {% endblock %}
 
 {% block footer%}
+<ul style="list-style:none;padding:0;margin:0">
     {% if item.has_prev %}
-        <ul style="list-style:none;padding:0;margin:0">
-            <li style="float:left"><a href="/www/{{item.prev_title}}.html">&laquo; 古い記事</a></li>
-            <div style="clear:both"></div>
-        </ul>
+             <li style="float:left"><a href="./{{item.prev_title}}.html">&laquo; 新しい記事</a></li>
+            
     {% endif %}
     {% if item.has_next %}
-        <ul style="list-style:none;padding:0;margin:0">
-            <li style="float:right"><a href="/www/{{item.next_title}}.html">新しい記事 &raquo;</a></li>
-            <div style="clear:both"></div>
-        </ul>
+       
+            <li style="float:right"><a href="./{{item.next_title}}.html">古い記事 &raquo;</a></li>
     {% endif %}
+         <div style="clear:both"></div>
+            </ul>
 {% endblock %}
 
 

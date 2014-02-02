@@ -112,6 +112,6 @@ def parse(filename):
             else:
                 contentPart = '\n'.join(content[currentIndex:nextIndex])
             contentParts.append(contentPart)
-        elements['content'] = '\n'.join(contentParts)
+        elements['content'] = elements['abstrct']+'\n'+'\n'.join(contentParts)
         return elements
 

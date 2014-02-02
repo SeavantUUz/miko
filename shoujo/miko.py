@@ -2,7 +2,7 @@
 from shoujo.utils import save_nodes,get_nodes,sort_nodes,parse,getconfig,update_themes,_nodesdic,_tagsdic,_dontcare
 from shoujo.node import Node
 from shoujo.pagination import Pagination
-import codecs,shutil,os
+import codecs,shutil,os,SimpleHTTPServer,SocketServer
 
 def _node(filename):
     elements = parse(filename)
@@ -172,4 +172,14 @@ def links():
 def aboutme():
     '''generate about_me.html'''
     return _content('about_me')
+
+def preview():
+    configs = getconfig()
+    app = configs['app']
+    os.chdir(os.path.join(app))
+    PORT = 8000
+    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+    httpd = SocketServer.TCPServer(('localhost',PORT),Handler)
+    print u'运行服务器在http://localhost:8000'
+    httpd.serve_forever()
 
