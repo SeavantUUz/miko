@@ -37,10 +37,10 @@ A static blog written by python .
  some texts as abstract.
 
  content.
- \`\`\`python
+ ```python
 def hello(name="World"):
     print "Hello %s" % name
- \`\`\`
+ ```
 ```
   摘要和内容都直接支持markdown格式
 
