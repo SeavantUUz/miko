@@ -29,19 +29,18 @@ A static blog written by python .
 ## 书写格式
 -----------
 
-```
-# Hello world
-- archive:documentation
-- tags:python,doc
+    # Hello world
+    - archive:documentation
+    - tags:python,doc
 
- some texts as abstract.
+    some texts as abstract.
 
- content.
- ```python
-def hello(name="World"):
-    print "Hello %s" % name
- ```
-```
+    content.
+    ```python
+    def hello(name="World"):
+        print "Hello %s" % name
+    ```
+    
   摘要和内容都直接支持markdown格式
 
 ## 文档
