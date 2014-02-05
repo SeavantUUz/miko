@@ -191,10 +191,11 @@ def init():
         if choose == 'yes':
             shutil.rmtree(app)
             os.mkdir(app)
-            shutil.copytree('themes',os.path.join(app,'themes'))
-            os.mkdir(os.path.join(app,out))
-            os.mkdir(os.path.join(app,out,'posts'))
-            print u'目录结构已建立'
+    else:
+        shutil.copytree('themes',os.path.join(app,'themes'))
+        os.mkdir(os.path.join(app,out))
+        os.mkdir(os.path.join(app,out,'posts'))
+        print u'目录结构已建立'
 
 @update_themes
 def themes():

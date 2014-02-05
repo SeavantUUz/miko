@@ -17,7 +17,7 @@
         <id>{{title}}</id>
         <updated>{{node.timestamp|xmldatetime}}</updated>
         <content type="html" xml:lang="en">
-            <![CDATA[ {{ node.abstrct }}
+            <![CDATA[ {{ node.abstrct|markdown }}
             ]]>
         </content>
     </entry>

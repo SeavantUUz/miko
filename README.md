@@ -1,41 +1,52 @@
-ShoujoA
+miko
 =========
 A static blog written by python . 
 
-**Usage**  
-*Be sure your os is Linux.ShoujoA can not run on windows*
+个人用的静态博客生成器，前身是ShoujoA
+实际运行效果请见:http://blog.kochiya.me/
 
-* clone it.`git clone git@github.com:SeavantUUz/ShoujoA.git`
-* cd and into the ShoujoA
-* install [virtualenv](http://www.virtualenv.org/en/latest/) 
-* in ShoujoA dir run `virtualenv env` to active virtual env
-* run `env/bin/activate`
-* edit `config.yaml` by your favorite editor.Revise it to your config.
-    * MAIN_PATH is where dirs conpose
-    * OUTDIR is a dirname where your htmls be placed
-    * BACKUP_DIR is a dirname where your backup dir be placed(Yes,ShoujoA can backup your posts)
-    * THEME_DIR is a dirname where the themes be placed
-    * All above dirs will be auto create while you run `./shoujo.py --init`.So,don't worry~~
-    * NAME is your website name
-    * AUTHOR is your name
-    * HOMEPAGE is your domin name
-    * POSTS_NUM is the number that each page should contain posts
-    * DESCRIPTION is your website description
-* if you revised.Chmod shoujo.py to 744 and run `./shoujo.py --init`
-* write a test file.But remember you should obey some rules.
-    * first line is the post's title
-    * second line is the archive
-    * third line is the tags
-    * leave forth line as a blank line
-    * the remains line is your post's content
-    * ShoujoA will auto find first blank line in content . If found,the former content will be treated as abstrct.
-* you can always run `./shoujo.py --post filename` to submit a new post
-* you can also run `./shoujo.py --show` to see your posted posts
-* run `./shoujo.py --remove index` will delete a post
-* run `./shoujo.py --postAll 0` will rebuild all posts from backup dir.Or you can run `./shoujo.py --postAll dirname` to add some posts from dir
-* enjoy your ShoujoA!!
-* run `./shoujo --updateThemes` to update all themes
-* more feathers is on the road.
+##命令
+-------------
 
+初始化
+`shoujo.py --init`
 
+提交一篇博文
+`shoujo.py --post filename`
 
+提交一个文件夹
+`shoujo.py --postDir dirname`
+
+查看已提交的文章
+`shoujo.py --show`
+
+删除一篇文章
+`shoujo.py --remove index`
+
+本地启动一个测试服务器预览
+`shoujo.py --preview`
+
+##书写格式
+-----------
+
+```
+# Hello world
+- archive:documentation
+- tags:python,doc
+
+ some texts as abstract.
+
+ content.
+ ```python
+def hello(name="World"):
+    print "Hello %s" % name
+ ```
+```
+  摘要和内容都直接支持markdown格式
+
+##文档
+-----------
+这是几篇文档。
+http://blog.kochiya.me/www/posts/%E5%B7%AB%E5%A5%B3%E7%9A%84%E6%96%B0%E5%B9%B4.html
+http://blog.kochiya.me/www/posts/ShoujoA%E7%9A%84%E9%83%A8%E7%BD%B2%E3%80%81%E8%AF%84%E8%AE%BA%E4%BB%A5%E5%8F%8A%E5%85%B6%E5%AE%83.html
+http://blog.kochiya.me/www/posts/ShoujoA%E7%9A%84%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.html
