@@ -66,7 +66,7 @@ def getconfig(attr='all'):
     if attr == 'all':
         return configs
     else:
-        return config.get(attr)
+        return configs.get(attr)
 
 def update_themes(func):
     def wrapper(*args,**kwargs):

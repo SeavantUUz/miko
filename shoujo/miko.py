@@ -51,7 +51,6 @@ def sitemap(func):
         configs = getconfig()
         app = configs.get('app')
         home = configs.get('home')
-        out = configs.get('out')
         with codecs.open(os.path.join(app,'sitemap.txt'),'w','utf-8') as sitemap:
             for node in nodes:
                 url = home+'/'+node.url
@@ -202,7 +201,7 @@ def themes():
     '''update themes.In fact,decorater handle all things'''
     return None
 
-def links(func):
+def links():
     '''generate links.html'''
     return _content('links')
 
